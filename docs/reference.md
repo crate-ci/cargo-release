@@ -11,6 +11,7 @@
 | `<LEVEL>`       | string | Bump specified version field. |
 | `--metadata`    | string | Populate the metadata field in the version. |
 | `--token`       | string | Token to use when running `cargo publish` |
+| `--exclude-unchanged` | bool | Only act on (transitive dependencies of) packages that have changed since the previous release |
 
 ### Bump level
 

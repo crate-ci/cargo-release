@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::ffi::OsStr;
 use std::io::Write;
 use std::path::Path;
@@ -431,6 +432,7 @@ fn release_packages<'m>(
     }
 
     let lock_path = ws_meta.workspace_root.join("Cargo.lock");
+    let mut unchanged_pkgs = HashSet::new();
     for pkg in pkgs {
         if let Some(version) = pkg.version.as_ref() {
             let cwd = pkg.package_path;
@@ -469,12 +471,21 @@ fn release_packages<'m>(
                     let _ = changed.swap_remove(lock_index);
                 }
                 if changed.is_empty() {
-                    log::warn!(
-                        "Updating {} to {} despite no changes made since tag {}",
-                        crate_name,
-                        version.version_string,
-                        prev_tag_name
-                    );
+                    if args.exclude_unchanged {
+                        unchanged_pkgs.insert(crate_name);
+                        log::info!(
+                            "Filtering out {} {} since it has no changes since tag {}",
+                            crate_name,
+                            version.version_string,
+                            prev_tag_name);
+                    } else {
+                        log::warn!(
+                            "Updating {} to {} despite no changes made since tag {}",
+                            crate_name,
+                            version.version_string,
+                            prev_tag_name
+                        );
+                    }
                 } else {
                     log::debug!(
                         "Files changed in {} since {}: {:#?}",
@@ -492,6 +503,33 @@ fn release_packages<'m>(
             }
         }
     }
+
+    log::debug!("Computing transitive closure of dependencies-of-changed packages");
+    let pkgs: &Vec<&'m PackageRelease<'m>> = {
+        let mut changed_pkgs: Vec<&'m PackageRelease<'m>> = pkgs.iter()
+            .filter(|p| !unchanged_pkgs.contains(p.meta.name.as_str()))
+            .copied()
+            .collect();
+        let mut i = 0;
+        while i < changed_pkgs.len() {
+            let p = changed_pkgs[i];
+            i += 1;
+            log::debug!("Considering package {} ({}/{})", p.meta.name.as_str(), i, changed_pkgs.len());
+            for dep in p.dependents.iter() {
+                if !changed_pkgs.iter().any(|p| p.meta.name.as_str() == dep.pkg.name.as_str()) {
+                    log::debug!("  dependent package {} hasn't yet been seen", dep.pkg.name.as_str());
+                    if let Some(dep_p) = pkgs.iter().find(|p| p.meta.name.as_str() == dep.pkg.name.as_str()) {
+                        changed_pkgs.push(dep_p);
+                    }
+                } else {
+                    log::debug!("  dependent package {} has already been seen", dep.pkg.name.as_str());
+                }
+            }
+        }
+        &changed_pkgs.to_vec()
+    };
+    log::debug!("Final package set: {:?}",
+                pkgs.iter().map(|p| p.meta.name.as_str()).collect::<Vec<_>>());
 
     let git_remote = ws_config.push_remote();
     let branch = git::current_branch(ws_meta.workspace_root.as_std_path())?;
@@ -871,6 +909,10 @@ struct ReleaseOpt {
 
     #[structopt(flatten)]
     logging: Verbosity,
+
+    #[structopt(long)]
+    /// Filter the final list of packages, omitting those that have not changed since previous release
+    exclude_unchanged: bool,
 }
 
 #[derive(StructOpt, Debug, Clone)]
