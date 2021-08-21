@@ -97,6 +97,7 @@ The following placeholders in configuration values will be be replaced with the 
 
 * `{{prev_version}}`: The version before `cargo-release` was executed (before any version bump).
 * `{{version}}`: The current (bumped) crate version.
+* `{{version_without_metadata}}`: The current (bumped) crate version, but with the (optional) metadata stripped. Useful for cargo dependencies, which can't contain metadata.
 * `{{next_version}}` (only valid for `post-release-{commit-message,replacements}`): The crate version for starting development.
 * `{{crate_name}}`: The name of the current crate in `Cargo.toml`.
 * `{{date}}`: The current date in `%Y-%m-%d` format.

@@ -89,6 +89,12 @@ impl Version {
     pub fn is_prerelease(&self) -> bool {
         self.version.is_prerelease()
     }
+
+    pub fn without_metadata(&self) -> String {
+        let mut stripped_version = self.version.clone();
+        stripped_version.build = semver::BuildMetadata::EMPTY.clone();
+        stripped_version.to_string()
+    }
 }
 
 arg_enum! {
@@ -543,6 +549,15 @@ mod test {
             assert_req_bump("1.1.0", "=1.0.0", "=1.1.0");
             assert_req_bump("1.1.1", "=1.0.0", "=1.1.1");
             assert_req_bump("2.0.0", "=1.0.0", "=2.0.0");
+        }
+
+        #[test]
+        fn metadata_strip() {
+            let version = Version {
+                version: semver::Version::parse("1.0.0-rc1+metadata.0.0").unwrap(),
+                version_string: "1.0.0-rc1+metadata.0.0".to_string(),
+            };
+            assert_eq!("1.0.0-rc1", version.without_metadata().to_string());
         }
     }
 }

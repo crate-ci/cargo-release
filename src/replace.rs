@@ -10,6 +10,7 @@ use crate::error::FatalError;
 pub struct Template<'a> {
     pub prev_version: Option<&'a str>,
     pub version: Option<&'a str>,
+    pub version_without_metadata: Option<&'a str>,
     pub crate_name: Option<&'a str>,
     pub date: Option<&'a str>,
 
@@ -26,6 +27,9 @@ impl<'a> Template<'a> {
         }
         if let Some(version) = self.version {
             s = s.replace("{{version}}", version);
+        }
+        if let Some(version_without_metadata) = self.version_without_metadata {
+            s = s.replace("{{version_without_metadata}}", version_without_metadata);
         }
         if let Some(crate_name) = self.crate_name {
             s = s.replace("{{crate_name}}", crate_name);

@@ -268,11 +268,14 @@ fn release_packages<'m>(
                 cargo::update_lock(pkg.manifest_path)?;
             }
 
+            let without_metadata = version.without_metadata();
+
             if !pkg.config.pre_release_replacements().is_empty() {
                 // try replacing text in configured files
                 let template = Template {
                     prev_version: Some(&pkg.prev_version.version_string),
                     version: Some(new_version_string),
+                    version_without_metadata: Some(&without_metadata),
                     crate_name: Some(crate_name),
                     date: Some(NOW.as_str()),
                     tag_name: pkg.tag.as_deref(),
