@@ -107,7 +107,7 @@ dependencies = [
  "dirs-next",
  "env_logger",
  "ignore",
- "itertools 0.9.0",
+ "itertools",
  "log",
  "maplit",
  "once_cell",
@@ -439,15 +439,6 @@ dependencies = [
 
 [[package]]
 name = "itertools"
-version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "284f18f85651fe11e8a991b2adb42cb078325c996ed026d994719efcfca1d54b"
-dependencies = [
- "either",
-]
-
-[[package]]
-name = "itertools"
 version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "69ddb889f9d0d08a67338271fa9b62996bc788c7796a5c18cf057420aaed5eaf"
@@ -643,7 +634,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bc3d91237f5de3bcd9d927e24d03b495adb6135097b001cea7403e2d573d00a9"
 dependencies = [
  "difflib",
- "itertools 0.10.1",
+ "itertools",
  "predicates-core",
 ]
 
