@@ -79,7 +79,7 @@ fn release_workspace(args: &args::ReleaseOpt) -> Result<i32, error::FatalError> 
     let root = git::top_level(ws_meta.workspace_root.as_std_path())?;
     let pkg_releases: Result<HashMap<_, _>, _> = selected_pkgs
         .iter()
-        .filter_map(|p| PackageRelease::load(args, &root, &ws_meta, p).transpose())
+        .filter_map(|p| PackageRelease::load(args, &root, &ws_meta, p, true).transpose())
         .map(|p| p.map(|p| (&p.meta.id, p)))
         .collect();
     let pkg_releases = pkg_releases?;
@@ -91,7 +91,7 @@ fn release_workspace(args: &args::ReleaseOpt) -> Result<i32, error::FatalError> 
     let excluded_pkgs: Result<Vec<_>, _> = excluded_pkgs
         .iter()
         .filter(|p| pkg_ids.contains(&&p.id))
-        .filter_map(|p| PackageRelease::load(args, &root, &ws_meta, p).transpose())
+        .filter_map(|p| PackageRelease::load(args, &root, &ws_meta, p, false).transpose())
         .collect();
     let excluded_pkgs = excluded_pkgs?;
     for pkg in excluded_pkgs {
@@ -660,6 +660,7 @@ impl<'m> PackageRelease<'m> {
         git_root: &Path,
         ws_meta: &'m cargo_metadata::Metadata,
         pkg_meta: &'m cargo_metadata::Package,
+        include: bool,
     ) -> Result<Option<Self>, error::FatalError> {
         let manifest_path = pkg_meta.manifest_path.as_std_path();
         let cwd = manifest_path.parent().unwrap_or_else(|| Path::new("."));
@@ -726,9 +727,12 @@ impl<'m> PackageRelease<'m> {
             template.render(config.tag_name())
         };
 
-        let version = args
-            .level_or_version
-            .bump(&prev_version.full_version, args.metadata.as_deref())?;
+        let version = if include {
+            args.level_or_version
+                .bump(&prev_version.full_version, args.metadata.as_deref())?
+        } else {
+            None
+        };
         let is_pre_release = version
             .as_ref()
             .map(version::Version::is_prerelease)
