@@ -4,7 +4,7 @@
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::ffi::OsStr;
-use std::io::Write;
+use std::io::{self, Write};
 use std::path::Path;
 use std::process::exit;
 
@@ -27,16 +27,25 @@ use crate::replace::{do_file_replacements, Template};
 use crate::version::VersionExt;
 
 fn main() {
-    let args::Command::Release(ref release_matches) = args::Command::from_args();
+    match args::Command::from_args() {
+        args::Command::Release(ref release_matches) => {
+            let mut builder = get_logging(release_matches.logging.log_level());
+            builder.init();
 
-    let mut builder = get_logging(release_matches.logging.log_level());
-    builder.init();
-
-    match release_workspace(release_matches) {
-        Ok(code) => exit(code),
-        Err(e) => {
-            log::error!("Fatal: {}", e);
-            exit(128);
+            match release_workspace(release_matches) {
+                Ok(code) => exit(code),
+                Err(e) => {
+                    log::error!("Fatal: {}", e);
+                    exit(128);
+                }
+            }
+        }
+        args::Command::Completions(ref completion_matches) => {
+            args::Command::clap().gen_completions_to(
+                "cargo-release",
+                completion_matches.shell,
+                &mut io::stdout(),
+            );
         }
     }
 }

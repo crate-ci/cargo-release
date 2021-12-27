@@ -15,6 +15,7 @@ pub enum Command {
         setting = structopt::clap::AppSettings::DontCollapseArgsInUsage
     )]
     Release(ReleaseOpt),
+    Completions(CompletionsOpt),
 }
 
 #[derive(Debug, Clone, StructOpt)]
@@ -221,4 +222,10 @@ fn resolve_bool_arg(yes: bool, no: bool) -> Option<bool> {
         (false, false) => None,
         (_, _) => unreachable!("StructOpt should make this impossible"),
     }
+}
+
+#[derive(StructOpt, Debug, Clone)]
+pub struct CompletionsOpt {
+    #[structopt(long, short = "s", possible_values = &clap::Shell::variants(), case_insensitive = true)]
+    pub shell: clap::Shell,
 }
