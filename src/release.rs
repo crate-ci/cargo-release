@@ -125,6 +125,29 @@ fn release_packages<'m>(
 
     // STEP 0: Help the user make the right decisions.
     git::git_version()?;
+
+    let mut toolchains = HashSet::new();
+    let mut missing_toolchain = false;
+    for pkg in pkgs {
+        if let Some(toolchain_version) = pkg.config.rust_version() {
+            if toolchains.insert(toolchain_version)
+                && !cargo::is_toolchain_present(toolchain_version)
+            {
+                log::error!(
+                    "{} requires rust {} toolchain to publish",
+                    pkg.meta.name,
+                    toolchain_version
+                );
+                missing_toolchain = true;
+            }
+        }
+    }
+    if missing_toolchain {
+        if !dry_run {
+            return Ok(101);
+        }
+    }
+
     let mut dirty = false;
     if ws_config.consolidate_commits() {
         if git::is_dirty(ws_meta.workspace_root.as_std_path())? {
@@ -395,6 +418,7 @@ fn release_packages<'m>(
                 features,
                 pkg.config.registry(),
                 args.token.as_ref().map(AsRef::as_ref),
+                pkg.config.rust_version(),
             )? {
                 return Ok(103);
             }

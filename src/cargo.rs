@@ -50,6 +50,36 @@ pub fn package_content(manifest_path: &Path) -> Result<Vec<std::path::PathBuf>, 
     }
 }
 
+pub fn is_toolchain_present(toolchain_version: &str) -> bool {
+    let formatted_toolchain_version = format!("+{}", toolchain_version);
+
+    let output = std::process::Command::new("cargo")
+        .args([&formatted_toolchain_version, "publish", "--help"])
+        .output();
+    match output {
+        Ok(output) => {
+            if output.status.success() {
+                true
+            } else {
+                log::trace!(
+                    "Error when checking for presence of {} toolchain: {}",
+                    toolchain_version,
+                    String::from_utf8_lossy(&output.stderr)
+                );
+                false
+            }
+        }
+        Err(err) => {
+            log::trace!(
+                "Error when checking for presence of {} toolchain: {}",
+                toolchain_version,
+                err
+            );
+            false
+        }
+    }
+}
+
 pub fn publish(
     dry_run: bool,
     verify: bool,
@@ -57,15 +87,25 @@ pub fn publish(
     features: &Features,
     registry: Option<&str>,
     token: Option<&str>,
+    toolchain_version: Option<&str>,
 ) -> Result<bool, FatalError> {
-    let cargo = cargo();
+    let mut command: Vec<&str>;
 
-    let mut command: Vec<&str> = vec![
-        &cargo,
+    let bin: String;
+    let formatted_toolchain_version;
+    if let Some(toolchain_version) = toolchain_version {
+        formatted_toolchain_version = format!("+{}", toolchain_version);
+        command = vec!["cargo", &formatted_toolchain_version];
+    } else {
+        bin = cargo();
+        command = vec![&bin];
+    }
+
+    command.extend([
         "publish",
         "--manifest-path",
         manifest_path.to_str().unwrap(),
-    ];
+    ]);
 
     if let Some(registry) = registry {
         command.push("--registry");

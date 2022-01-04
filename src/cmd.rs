@@ -11,11 +11,11 @@ fn do_call(
     envs: Option<BTreeMap<&OsStr, &OsStr>>,
     dry_run: bool,
 ) -> Result<bool, FatalError> {
+    if path.is_some() {
+        log::trace!("cd {}", path.unwrap().display());
+    }
+    log::trace!("{}", command.join(" "));
     if dry_run {
-        if path.is_some() {
-            log::trace!("cd {}", path.unwrap().display());
-        }
-        log::trace!("{}", command.join(" "));
         return Ok(true);
     }
     let mut iter = command.iter();

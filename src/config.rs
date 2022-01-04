@@ -18,6 +18,7 @@ pub struct Config {
     pub disable_release: Option<bool>,
     pub publish: Option<bool>,
     pub disable_publish: Option<bool>,
+    pub rust_version: Option<String>,
     pub verify: Option<bool>,
     pub no_verify: Option<bool>,
     pub push: Option<bool>,
@@ -68,6 +69,9 @@ impl Config {
         if let Some(publish) = resolve_bool_arg(source.publish, source.disable_publish) {
             self.publish = Some(publish);
             self.disable_publish = None;
+        }
+        if let Some(rust_version) = source.rust_version.as_deref() {
+            self.rust_version = Some(rust_version.to_owned());
         }
         if let Some(verify) = resolve_bool_arg(source.verify, source.no_verify) {
             self.verify = Some(verify);
@@ -164,6 +168,10 @@ impl Config {
 
     pub fn publish(&self) -> bool {
         resolve_bool_arg(self.publish, self.disable_publish).unwrap_or(true)
+    }
+
+    pub fn rust_version(&self) -> Option<&str> {
+        self.rust_version.as_deref()
     }
 
     pub fn verify(&self) -> bool {
@@ -412,6 +420,17 @@ pub fn dump_config(
             {
                 release_config.publish = Some(false);
                 release_config.disable_publish = None;
+            }
+            if release_config.rust_version() == Some("manifest") {
+                if let Some(rust_version) = cargo_file
+                    .get("package")
+                    .and_then(|p| p.get("rust-version"))
+                    .and_then(|r| r.as_str())
+                {
+                    release_config.rust_version = Some(rust_version.to_owned());
+                } else {
+                    release_config.rust_version = None;
+                }
             }
 
             release_config
