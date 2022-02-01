@@ -281,7 +281,19 @@ pub fn sort_workspace(ws_meta: &cargo_metadata::Metadata) -> Vec<&cargo_metadata
         .iter()
         .filter_map(|n| {
             if members.contains(&n.id) {
-                Some((&n.id, &n.dependencies))
+                // Return the package ID of all normal dependencies. Exclusde all dependencies that
+                // are dev and/or build dependencies only.
+                let normal_deps: Vec<_> = n
+                    .deps
+                    .iter()
+                    .filter_map(|d| {
+                        d.dep_kinds
+                            .iter()
+                            .position(|k| k.kind == cargo_metadata::DependencyKind::Normal)
+                            .map(|_| &d.pkg)
+                    })
+                    .collect();
+                Some((&n.id, normal_deps))
             } else {
                 None
             }
@@ -302,7 +314,7 @@ fn sort_workspace_inner<'m>(
     pkg_id: &'m cargo_metadata::PackageId,
     dep_tree: &std::collections::HashMap<
         &'m cargo_metadata::PackageId,
-        &'m Vec<cargo_metadata::PackageId>,
+        Vec<&'m cargo_metadata::PackageId>,
     >,
     processed: &mut std::collections::HashSet<&'m cargo_metadata::PackageId>,
     sorted: &mut Vec<&'m cargo_metadata::PackageId>,
@@ -313,7 +325,7 @@ fn sort_workspace_inner<'m>(
 
     for dep_id in dep_tree[pkg_id]
         .iter()
-        .filter(|dep_id| dep_tree.contains_key(dep_id))
+        .filter(|dep_id| dep_tree.contains_key(*dep_id))
     {
         sort_workspace_inner(ws_meta, dep_id, dep_tree, processed, sorted);
     }
@@ -897,6 +909,44 @@ mod test {
             update_lock(manifest_path.path()).unwrap();
             lock_path.assert(
                 predicate::path::eq_file(Path::new("tests/fixtures/mixed_ws/Cargo.lock")).not(),
+            );
+
+            temp.close().unwrap();
+        }
+    }
+
+    mod sort_workspace {
+        use super::*;
+
+        #[test]
+        fn circular_dev_dependency() {
+            let temp = assert_fs::TempDir::new().unwrap();
+            temp.copy_from("tests/fixtures/mixed_ws", &["**"]).unwrap();
+            let manifest_path = temp.child("a/Cargo.toml");
+            manifest_path
+                .write_str(
+                    r#"
+    [package]
+    name = "a"
+    version = "0.1.0"
+    authors = []
+
+    [dev-dependencies]
+    b = { path = "../" }
+    "#,
+                )
+                .unwrap();
+            let root_manifest_path = temp.child("Cargo.toml");
+            let meta = cargo_metadata::MetadataCommand::new()
+                .manifest_path(root_manifest_path.path())
+                .exec()
+                .unwrap();
+
+            let sorted = sort_workspace(&meta);
+            let root_package = meta.resolve.as_ref().unwrap().root.as_ref().unwrap();
+            assert_ne!(
+                sorted[0], root_package,
+                "The root package must not be the first one to be published."
             );
 
             temp.close().unwrap();
