@@ -59,6 +59,7 @@ pub fn is_dirty(dir: &Path) -> Result<bool, FatalError> {
         .arg("HEAD")
         .arg("--exit-code")
         .arg("--name-only")
+        .arg("--")
         .current_dir(dir)
         .output()
         .map_err(FatalError::from)?;
