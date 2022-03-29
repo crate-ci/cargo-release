@@ -662,7 +662,27 @@ fn release_packages<'m>(
         }
     }
 
-    // STEP 7: git push
+    // STEP 7: post-release hook
+    for pkg in pkgs {
+        if let (Some(post_rel_hook), Some(_)) =
+            (pkg.config.post_release_hook(), pkg.version.as_ref())
+        {
+            let cwd = pkg.package_root;
+            let post_rel_hook = post_rel_hook.args();
+            log::debug!("Calling post-release hook: {:?}", post_rel_hook);
+            let envs = maplit::btreemap! {
+                OsStr::new("RELEASE_TAG") => OsStr::new(pkg.tag.as_ref().expect("post-release hook with no tag")),
+                OsStr::new("DRY_RUN") => OsStr::new(if dry_run { "true" } else { "false" }),
+            };
+            // we use dry_run environmental variable to run the script
+            // so here we set dry_run=false and always execute the command.
+            if !cmd::call_with_env(post_rel_hook, envs, cwd, false)? {
+                todo!("handle non-zero exit from post-release hook")
+            }
+        }
+    }
+
+    // STEP 8: git push
     if ws_config.push() {
         let mut shared_refs = HashSet::new();
         for pkg in pkgs {
