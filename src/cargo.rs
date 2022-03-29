@@ -898,6 +898,7 @@ mod test {
 
     mod update_lock {
         use super::*;
+        use std::fs;
 
         #[test]
         fn in_pkg() {
@@ -905,16 +906,15 @@ mod test {
             temp.copy_from("tests/fixtures/simple", &["**"]).unwrap();
             let manifest_path = temp.child("Cargo.toml");
             let lock_path = temp.child("Cargo.lock");
+            let old_lock_path = temp.child("Cargo.lock.old");
+            update_lock(&manifest_path).unwrap();
+            fs::copy(&lock_path, &old_lock_path).unwrap();
 
             set_package_version(manifest_path.path(), "2.0.0", false).unwrap();
-            lock_path.assert(predicate::path::eq_file(Path::new(
-                "tests/fixtures/simple/Cargo.lock",
-            )));
+            lock_path.assert(predicate::path::eq_file(old_lock_path.path()));
 
             update_lock(manifest_path.path()).unwrap();
-            lock_path.assert(
-                predicate::path::eq_file(Path::new("tests/fixtures/simple/Cargo.lock")).not(),
-            );
+            lock_path.assert(predicate::path::eq_file(Path::new(old_lock_path.path())).not());
 
             temp.close().unwrap();
         }
@@ -925,16 +925,15 @@ mod test {
             temp.copy_from("tests/fixtures/pure_ws", &["**"]).unwrap();
             let manifest_path = temp.child("b/Cargo.toml");
             let lock_path = temp.child("Cargo.lock");
+            let old_lock_path = temp.child("Cargo.lock.old");
+            update_lock(&manifest_path).unwrap();
+            fs::copy(&lock_path, &old_lock_path).unwrap();
 
             set_package_version(manifest_path.path(), "2.0.0", false).unwrap();
-            lock_path.assert(predicate::path::eq_file(Path::new(
-                "tests/fixtures/pure_ws/Cargo.lock",
-            )));
+            lock_path.assert(predicate::path::eq_file(old_lock_path.path()));
 
             update_lock(manifest_path.path()).unwrap();
-            lock_path.assert(
-                predicate::path::eq_file(Path::new("tests/fixtures/pure_ws/Cargo.lock")).not(),
-            );
+            lock_path.assert(predicate::path::eq_file(old_lock_path.path()).not());
 
             temp.close().unwrap();
         }
@@ -945,16 +944,15 @@ mod test {
             temp.copy_from("tests/fixtures/mixed_ws", &["**"]).unwrap();
             let manifest_path = temp.child("Cargo.toml");
             let lock_path = temp.child("Cargo.lock");
+            let old_lock_path = temp.child("Cargo.lock.old");
+            update_lock(&manifest_path).unwrap();
+            fs::copy(&lock_path, &old_lock_path).unwrap();
 
             set_package_version(manifest_path.path(), "2.0.0", false).unwrap();
-            lock_path.assert(predicate::path::eq_file(Path::new(
-                "tests/fixtures/mixed_ws/Cargo.lock",
-            )));
+            lock_path.assert(predicate::path::eq_file(old_lock_path.path()));
 
             update_lock(manifest_path.path()).unwrap();
-            lock_path.assert(
-                predicate::path::eq_file(Path::new("tests/fixtures/mixed_ws/Cargo.lock")).not(),
-            );
+            lock_path.assert(predicate::path::eq_file(old_lock_path.path()).not());
 
             temp.close().unwrap();
         }
