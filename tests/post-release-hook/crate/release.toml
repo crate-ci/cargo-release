@@ -1,0 +1,2 @@
+push = false
+post-release-hook = ["cargo", "run"]
