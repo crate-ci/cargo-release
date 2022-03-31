@@ -677,7 +677,8 @@ fn release_packages<'m>(
             // we use dry_run environmental variable to run the script
             // so here we set dry_run=false and always execute the command.
             if !cmd::call_with_env(post_rel_hook, envs, cwd, false)? {
-                todo!("handle non-zero exit from post-release hook")
+                log::error!("Post release hook failed. Aborting. CHANGES NOT ROLLED BACK.",);
+                return Ok(107);
             }
         }
     }
