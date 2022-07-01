@@ -29,7 +29,7 @@ pre-release-replacements = [
 ]
 
 [dependencies]
-cargo_metadata = "0.14"
+cargo_metadata = "0.15"
 crates-index = "0.18"
 # Enabling the feature for `crates-index`
 git2 = { version = "0.14.2", features = ["vendored-libgit2"] }
