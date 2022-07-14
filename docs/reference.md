@@ -96,7 +96,8 @@ Note: fields are from the package-configuration unless otherwise specified.
 This field is an array of tables with the following
 
 * `file`: the file to search and replace
-* `search`: regex that matches string you want to replace
+* `search`: regex that matches string you want to replace, using [fancy_regex](https://crates.io/crates/fancy-regex)
+  (essentially PCRE)
 * `replace`: the replacement string; you can use the any of the placeholders mentioned below.
 * `min` (default is `1`): Minimum occurrences of `search`.
 * `max` (optional): Maximum occurrences of `search`.

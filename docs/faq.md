@@ -109,9 +109,10 @@ replace = "{{date}}"
 
 [[pre-release-replacements]]
 # Remove section headings with no content (other than empty lists)
-# https://regex101.com/r/sInwGH/1
+# fancy_regex has no multiline mode so we need to be explicit
+# https://regex101.com/r/NCL8bP/1
 file = "../../CHANGELOG.md"
-search = '''^### (?:Added|Changed|Deprecated|Removed|Fixed|Security)(?:\s|^-)+(?=^#)'''
+search = '''(?<=^|\n|\n\r)### (?:Added|Changed|Deprecated|Removed|Fixed|Security)(?:\s|(?:^|\n|\n\r)-)+(?:\n|\n\r)(?=#)'''
 replace = ""
 min = 0
 
