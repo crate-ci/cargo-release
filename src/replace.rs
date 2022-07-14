@@ -1,6 +1,8 @@
 use std::collections::BTreeMap;
 use std::path::Path;
 
+use fancy_regex::RegexBuilder;
+
 use crate::config::Replace;
 use crate::error::FatalError;
 
@@ -87,8 +89,8 @@ pub fn do_file_replacements(
             }
 
             let pattern = replace.search.as_str();
-            let r = regex::RegexBuilder::new(pattern)
-                .multi_line(true)
+            let r = RegexBuilder::new(pattern)
+                // .multi_line(true) Not available with fancy_regex
                 .build()
                 .map_err(FatalError::from)?;
 
