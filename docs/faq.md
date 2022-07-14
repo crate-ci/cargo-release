@@ -36,17 +36,42 @@ However, you can still use [`pre-release-replacements`](reference.md) to smooth 
 process of releasing a changelog, along with your crate. You need to
 keep your changelog arranged during feature development, in an `Unreleased`
 section (recommended by [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)):
+An example `CHANGELOG.md`:
 
 ```markdown
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+<!--
+Add any changes to the below section as work is done. Upon release,
+its information will automatically be moved to a new log entry.
+-->
+
 <!-- next-header -->
 
 ## [Unreleased] - ReleaseDate
 
 ### Added
-- feature 3
+- Added new feature ...
 
 ### Changed
-- bug 1
+- Changed existing implementation ...
+
+### Deprecated
+- Marked existing feature for future removal ...
+
+### Removed
+- Removed deprecated feature ...
+
+### Fixed
+- Corrected functionality of ...
+
+### Security
+- Fixed vulnerability
 
 ## [1.0.0] - 2017-06-20
 ### Added
@@ -59,24 +84,88 @@ section (recommended by [Keep a Changelog](http://keepachangelog.com/en/1.0.0/))
 ```
 
 In `release.toml`, configure `cargo release` to do replacements while
-bumping version:
+bumping version, as shown below. This configuration will automatically
+remove unused section headings.
+
+_To use in `Cargo.toml`, instead replace `[[pre-release-replacements]]`
+with `[[package.metadata.release.pre-release-replacements]]`)_
 
 ```toml
-pre-release-replacements = [
-  {file="CHANGELOG.md", search="Unreleased", replace="{{version}}"},
-  {file="CHANGELOG.md", search="\\.\\.\\.HEAD", replace="...{{tag_name}}", exactly=1},
-  {file="CHANGELOG.md", search="ReleaseDate", replace="{{date}}"},
-  {file="CHANGELOG.md", search="<!-- next-header -->", replace="<!-- next-header -->\n\n## [Unreleased] - ReleaseDate", exactly=1},
-  {file="CHANGELOG.md", search="<!-- next-url -->", replace="<!-- next-url -->\n[Unreleased]: https://github.com/assert-rs/predicates-rs/compare/{{tag_name}}...HEAD", exactly=1},
-]
+[[pre-release-replacements]]
+file = "CHANGELOG.md"
+search = "Unreleased"
+replace = "{{version}}"
+
+[[pre-release-replacements]]
+file = "CHANGELOG.md"
+search = "\\.\\.\\.HEAD"
+replace = "...{{tag_name}}"
+exactly = 1
+
+[[pre-release-replacements]]
+file = "CHANGELOG.md"
+search = "ReleaseDate"
+replace = "{{date}}"
+
+[[pre-release-replacements]]
+# Remove section headings with no content (other than empty lists)
+# https://regex101.com/r/sInwGH/1
+file = "../../CHANGELOG.md"
+search = '''^### (?:Added|Changed|Deprecated|Removed|Fixed|Security)(?:\s|^-)+(?=^#)'''
+replace = ""
+min = 0
+
+[[pre-release-replacements]]
+file = "CHANGELOG.md"
+search = "<!-- next-header -->"
+replace = """\
+  <!-- next-header -->\n\n\
+  ## [Unreleased] - ReleaseDate\n\n\
+  ### Added\n\n\
+  ### Changed\n\n\
+  ### Deprecated\n\n\
+  ### Removed\n\n\
+  ### Fixed\n\n\
+  ### Security\n\n\
+  """
+exactly = 1
+
+[[pre-release-replacements]]
+file = "CHANGELOG.md"
+search = "<!-- next-url -->"
+replace = """\
+  <!-- next-url -->\n\
+  [Unreleased]: https://github.com/YOUR_GH_USERNAME/YOUR_GH_PROJECT_NAME/compare/{{tag_name}}...HEAD\
+  """
+exactly = 1
 ```
 
 `{{version}}` and `{{date}}` are pre-defined variables with value of
-current release version and date.
+current release version and date. Be sure to set your project's URL
+in the last section.
 
 `predicates` is a real world example
 - [`release.toml`](https://github.com/assert-rs/predicates-rs/blob/master/release.toml)
 - [`CHANGELOG.md`](https://github.com/assert-rs/predicates-rs/blob/master/CHANGELOG.md)
+
+
+### Note on crate vs. workspace changelogs
+
+If the above configuration is in your root `release.toml` or `Cargo.toml`,
+`cargo-release` will attempt to apply the settings for each crate. Usually
+this makes sense because each crate generally has a separate changelog, but
+there may be cases where you want all crates to either share a changelog,
+or exclude a changelog from some crates. To handle these cases, simply:
+
+- Create a symlink to the shared `CHANGELOG.md` in each crate's directory that
+  you want to share the changelog (recall that git does understand simlinks)
+- Move the `pre-release-replacements` configuration to one crate's `Cargo.toml`
+  or `release.toml`. There needs to be one `pre-release-replacements`
+  configuration in the workspace pointing to each shared `CHANGELOG.md` (i.e.,
+  ensure that two crates are not both configured to edit the same symlinked file)
+  
+This will ensure that the changelog is only updated once. For further
+information, see the below section.
 
 ## How do I apply a setting only to one crate in my workspace?
 
@@ -95,6 +184,8 @@ to customize settings differently for the root crate vs the other crate's, you
 have two choices:
 - Put the common setting in the workspace's `release.toml` and override it for the root crate in `Cargo.toml`.
 - Modify each crate's `release.toml` with the setting relevant for that crate.
+
+If you 
 
 ## How do I customize my tagging in a workspace?
 
