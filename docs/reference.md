@@ -2,16 +2,17 @@
 
 ## CLI Arguments
 
-| Argument        | Format | Description |
-|-----------------|--------|-------------|
-| `--execute`     | bool   | Actually perform the release |
+| Argument        | Format | Description                                                    |
+|-----------------|--------|----------------------------------------------------------------|
+| `--execute`     | bool   | Actually perform the release                                   |
 | `--no-confirm`  | bool   | Release the crate without the user verifying what will happen. |
-| `--isolated`    | bool   | Do not search for config files |
-| `--config`      | string | Load a config file from disk |
-| `<LEVEL>`       | string | Bump specified version field. |
-| `--metadata`    | string | Populate the metadata field in the version. |
-| `--token`       | string | Token to use when running `cargo publish` |
-| `--verbose`     | bool   | Show more detailed context, useful for debugging |
+| `--isolated`    | bool   | Do not search for config files                                 |
+| `--config`      | string | Load a config file from disk                                   |
+| `<LEVEL>`       | string | Bump specified version field.                                  |
+| `--metadata`    | string | Populate the metadata field in the version.                    |
+| `--token`       | string | Token to use when running `cargo publish`                      |
+| `--verbose`     | bool   | Show more detailed context, useful for debugging               |
+| `--allow-dirty` | bool   | Allow dirty working directories to be released.                |
 
 ### Bump level
 

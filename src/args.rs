@@ -65,6 +65,10 @@ pub struct ReleaseOpt {
 
     #[clap(flatten)]
     pub logging: Verbosity,
+
+    /// Allow dirty working directories to be released.
+    #[clap(long)]
+    pub allow_dirty: bool,
 }
 
 impl ReleaseOpt {

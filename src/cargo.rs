@@ -58,6 +58,7 @@ pub fn publish(
     registry: Option<&str>,
     token: Option<&str>,
     target: Option<&str>,
+    allow_dirty: bool,
 ) -> Result<bool, FatalError> {
     let cargo = cargo();
 
@@ -85,6 +86,9 @@ pub fn publish(
 
     if dry_run {
         command.push("--dry-run");
+    }
+
+    if dry_run || allow_dirty {
         command.push("--allow-dirty");
     }
 

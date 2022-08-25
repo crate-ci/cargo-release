@@ -126,8 +126,8 @@ fn release_packages<'m>(
     // STEP 0: Help the user make the right decisions.
     git::git_version()?;
 
-    if git::is_dirty(ws_meta.workspace_root.as_std_path())? {
-        log::error!("Uncommitted changes detected, please commit before release.");
+    if !args.allow_dirty && git::is_dirty(ws_meta.workspace_root.as_std_path())? {
+        log::error!("Uncommitted changes detected, please commit before release, or re-run using `--dry-run`.");
         failed = true;
         if !dry_run {
             return Ok(101);
@@ -517,6 +517,7 @@ fn release_packages<'m>(
             pkg.config.registry(),
             args.token.as_ref().map(AsRef::as_ref),
             pkg.config.target.as_ref().map(AsRef::as_ref),
+            args.allow_dirty,
         )? {
             return Ok(103);
         }
