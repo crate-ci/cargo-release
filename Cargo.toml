@@ -47,7 +47,7 @@ dirs-next = "2.0"
 ignore = "0.4"
 difflib = "0.4"
 itertools = "0.10"
-once_cell = "1.13.0"
+once_cell = "1.13.1"
 clap = "3.2"
 clap-cargo = { version = "0.9", features = ["cargo_metadata"] }
 log = "0.4"
