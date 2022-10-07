@@ -1,0 +1,5 @@
+[package]
+name = "post-release-hook-ws-b"
+version = "420.420.420"
+edition = "2021"
+publish = false

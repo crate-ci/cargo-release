@@ -29,6 +29,7 @@ pub struct Config {
     pub pre_release_replacements: Option<Vec<Replace>>,
     pub post_release_replacements: Option<Vec<Replace>>,
     pub pre_release_hook: Option<Command>,
+    pub post_release_hook: Option<Command>,
     pub tag_message: Option<String>,
     pub tag_prefix: Option<String>,
     pub tag_name: Option<String>,
@@ -77,6 +78,7 @@ impl Config {
             pre_release_replacements: Some(empty.pre_release_replacements().to_vec()),
             post_release_replacements: Some(empty.post_release_replacements().to_vec()),
             pre_release_hook: empty.pre_release_hook().cloned(),
+            post_release_hook: empty.post_release_hook().cloned(),
             tag_message: Some(empty.tag_message().to_owned()),
             tag_prefix: None, // Skipping, its location dependent
             tag_name: Some(empty.tag_name().to_owned()),
@@ -148,6 +150,9 @@ impl Config {
         }
         if let Some(pre_release_hook) = source.pre_release_hook.as_ref() {
             self.pre_release_hook = Some(pre_release_hook.to_owned());
+        }
+        if let Some(post_release_hook) = source.post_release_hook.as_ref() {
+            self.post_release_hook = Some(post_release_hook.to_owned());
         }
         if let Some(tag_message) = source.tag_message.as_deref() {
             self.tag_message = Some(tag_message.to_owned());
@@ -269,6 +274,10 @@ impl Config {
 
     pub fn pre_release_hook(&self) -> Option<&Command> {
         self.pre_release_hook.as_ref()
+    }
+
+    pub fn post_release_hook(&self) -> Option<&Command> {
+        self.post_release_hook.as_ref()
     }
 
     pub fn tag_message(&self) -> &str {
