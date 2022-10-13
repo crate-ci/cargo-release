@@ -246,9 +246,9 @@ impl Config {
             .as_deref()
             .unwrap_or_else(|| {
                 if self.consolidate_commits() {
-                    "(cargo-release)"
+                    "chore: Release"
                 } else {
-                    "(cargo-release) version {{version}}"
+                    "chore: Release {{crate_name}} version {{version}}"
                 }
             })
     }
@@ -258,9 +258,9 @@ impl Config {
             .as_deref()
             .unwrap_or_else(|| {
                 if self.consolidate_commits() {
-                    "(cargo-release) start next development iteration"
+                    "chore: Start development"
                 } else {
-                    "(cargo-release) start next development iteration {{next_version}}"
+                    "chore: Start development of {{next_version}}"
                 }
             })
     }
@@ -286,7 +286,7 @@ impl Config {
     pub fn tag_message(&self) -> &str {
         self.tag_message
             .as_deref()
-            .unwrap_or("(cargo-release) {{crate_name}} version {{version}}")
+            .unwrap_or("chore: Release {{crate_name}} version {{version}}")
     }
 
     pub fn tag_prefix(&self, is_root: bool) -> &str {
