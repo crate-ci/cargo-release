@@ -234,7 +234,7 @@ impl Config {
     }
 
     pub fn consolidate_commits(&self) -> bool {
-        self.consolidate_commits.unwrap_or(false)
+        self.consolidate_commits.unwrap_or(true)
     }
 
     pub fn consolidate_pushes(&self) -> bool {
