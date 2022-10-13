@@ -234,23 +234,35 @@ impl Config {
     }
 
     pub fn consolidate_commits(&self) -> bool {
-        self.consolidate_commits.unwrap_or(false)
+        self.consolidate_commits.unwrap_or(true)
     }
 
     pub fn consolidate_pushes(&self) -> bool {
-        self.consolidate_pushes.unwrap_or(false)
+        self.consolidate_pushes.unwrap_or(true)
     }
 
     pub fn pre_release_commit_message(&self) -> &str {
         self.pre_release_commit_message
             .as_deref()
-            .unwrap_or("(cargo-release) version {{version}}")
+            .unwrap_or_else(|| {
+                if self.consolidate_commits() {
+                    "chore: Release"
+                } else {
+                    "chore: Release {{crate_name}} version {{version}}"
+                }
+            })
     }
 
     pub fn post_release_commit_message(&self) -> &str {
         self.post_release_commit_message
             .as_deref()
-            .unwrap_or("(cargo-release) start next development iteration {{next_version}}")
+            .unwrap_or_else(|| {
+                if self.consolidate_commits() {
+                    "chore: Start development"
+                } else {
+                    "chore: Start development of {{next_version}}"
+                }
+            })
     }
 
     pub fn pre_release_replacements(&self) -> &[Replace] {
@@ -274,7 +286,7 @@ impl Config {
     pub fn tag_message(&self) -> &str {
         self.tag_message
             .as_deref()
-            .unwrap_or("(cargo-release) {{crate_name}} version {{version}}")
+            .unwrap_or("chore: Release {{crate_name}} version {{version}}")
     }
 
     pub fn tag_prefix(&self, is_root: bool) -> &str {
