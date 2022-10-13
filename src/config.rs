@@ -238,19 +238,31 @@ impl Config {
     }
 
     pub fn consolidate_pushes(&self) -> bool {
-        self.consolidate_pushes.unwrap_or(false)
+        self.consolidate_pushes.unwrap_or(true)
     }
 
     pub fn pre_release_commit_message(&self) -> &str {
         self.pre_release_commit_message
             .as_deref()
-            .unwrap_or("(cargo-release) version {{version}}")
+            .unwrap_or_else(|| {
+                if self.consolidate_commits() {
+                    "(cargo-release)"
+                } else {
+                    "(cargo-release) version {{version}}"
+                }
+            })
     }
 
     pub fn post_release_commit_message(&self) -> &str {
         self.post_release_commit_message
             .as_deref()
-            .unwrap_or("(cargo-release) start next development iteration {{next_version}}")
+            .unwrap_or_else(|| {
+                if self.consolidate_commits() {
+                    "(cargo-release) start next development iteration"
+                } else {
+                    "(cargo-release) start next development iteration {{next_version}}"
+                }
+            })
     }
 
     pub fn pre_release_replacements(&self) -> &[Replace] {
