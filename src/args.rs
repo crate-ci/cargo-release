@@ -67,10 +67,6 @@ pub struct ReleaseOpt {
     #[command(flatten)]
     pub logging: Verbosity,
 
-    /// Write the current configuration to file with `-` for stdout
-    #[arg(long)]
-    pub dump_config: Option<std::path::PathBuf>,
-
     #[command(subcommand)]
     pub step: Option<Step>,
 }
