@@ -1,7 +1,6 @@
 use std::ffi::OsStr;
 use std::path::Path;
 
-use crate::args;
 use crate::config;
 use crate::error::FatalError;
 use crate::error::ProcessError;
@@ -13,87 +12,125 @@ use crate::ops::version;
 use crate::steps::plan;
 use crate::steps::plan::PackageRelease;
 
-pub fn release_workspace(args: &args::ReleaseOpt) -> Result<(), ProcessError> {
-    let ws_meta = args
-        .manifest
-        .metadata()
-        // When evaluating dependency ordering, we need to consider optional dependencies
-        .features(cargo_metadata::CargoOpt::AllFeatures)
-        .exec()
-        .map_err(FatalError::from)?;
-    let ws_config = config::load_workspace_config(&args.config, &ws_meta)?;
-    let mut pkgs = plan::load(&args.config, &ws_meta)?;
+#[derive(Debug, Clone, clap::Args)]
+pub struct ReleaseStep {
+    #[command(flatten)]
+    manifest: clap_cargo::Manifest,
 
-    for pkg in pkgs.values_mut() {
-        if let Some(prev_tag) = args.prev_tag_name.as_ref() {
-            // Trust the user that the tag passed in is the latest tag for the workspace and that
-            // they don't care about any changes from before this tag.
-            pkg.set_prev_tag(prev_tag.to_owned());
+    #[command(flatten)]
+    workspace: clap_cargo::Workspace,
+
+    /// Release level or version: bumping specified version field or remove prerelease extensions by default. Possible level value: major, minor, patch, release, rc, beta, alpha or any valid semver version that is greater than current version
+    #[arg(default_value_t)]
+    level_or_version: version::TargetVersion,
+
+    /// Semver metadata
+    #[arg(short, long)]
+    metadata: Option<String>,
+
+    #[command(flatten)]
+    config: crate::config::ConfigArgs,
+
+    /// Actually perform a release. Dry-run mode is the default
+    #[arg(short = 'x', long)]
+    execute: bool,
+
+    /// Skip release confirmation and version preview
+    #[arg(long)]
+    no_confirm: bool,
+
+    /// The name of tag for the previous release.
+    #[arg(long)]
+    prev_tag_name: Option<String>,
+}
+
+impl ReleaseStep {
+    pub fn run(&self) -> Result<(), ProcessError> {
+        let ws_meta = self
+            .manifest
+            .metadata()
+            // When evaluating dependency ordering, we need to consider optional dependencies
+            .features(cargo_metadata::CargoOpt::AllFeatures)
+            .exec()
+            .map_err(FatalError::from)?;
+        let ws_config = config::load_workspace_config(&self.config, &ws_meta)?;
+        let mut pkgs = plan::load(&self.config, &ws_meta)?;
+
+        for pkg in pkgs.values_mut() {
+            if let Some(prev_tag) = self.prev_tag_name.as_ref() {
+                // Trust the user that the tag passed in is the latest tag for the workspace and that
+                // they don't care about any changes from before this tag.
+                pkg.set_prev_tag(prev_tag.to_owned());
+            }
+            pkg.bump(&self.level_or_version, self.metadata.as_deref())?;
         }
-        pkg.bump(&args.level_or_version, args.metadata.as_deref())?;
-    }
 
-    let (_selected_pkgs, excluded_pkgs) = args.workspace.partition_packages(&ws_meta);
-    for excluded_pkg in excluded_pkgs {
-        let pkg = if let Some(pkg) = pkgs.get_mut(&excluded_pkg.id) {
-            pkg
-        } else {
-            // Either not in workspace or marked as `release = false`.
-            continue;
-        };
-        pkg.config.release = Some(false);
-        pkg.version = None;
-
-        let crate_name = pkg.meta.name.as_str();
-        let prev_tag_name = &pkg.prev_tag;
-        if let Some((changed, lock_changed)) =
-            crate::steps::version::changed_since(&ws_meta, pkg, prev_tag_name)
-        {
-            if !changed.is_empty() {
-                log::warn!(
-                    "Disabled by user, skipping {} which has files changed since {}: {:#?}",
-                    crate_name,
-                    prev_tag_name,
-                    changed
-                );
-            } else if lock_changed {
-                log::warn!(
-                    "Disabled by user, skipping {} despite lock file being changed since {}",
-                    crate_name,
-                    prev_tag_name
-                );
+        let (_selected_pkgs, excluded_pkgs) = self.workspace.partition_packages(&ws_meta);
+        for excluded_pkg in excluded_pkgs {
+            let pkg = if let Some(pkg) = pkgs.get_mut(&excluded_pkg.id) {
+                pkg
             } else {
-                log::trace!(
-                    "Disabled by user, skipping {} (no changes since {})",
+                // Either not in workspace or marked as `release = false`.
+                continue;
+            };
+            pkg.config.release = Some(false);
+            pkg.version = None;
+
+            let crate_name = pkg.meta.name.as_str();
+            let prev_tag_name = &pkg.prev_tag;
+            if let Some((changed, lock_changed)) =
+                crate::steps::version::changed_since(&ws_meta, pkg, prev_tag_name)
+            {
+                if !changed.is_empty() {
+                    log::warn!(
+                        "Disabled by user, skipping {} which has files changed since {}: {:#?}",
+                        crate_name,
+                        prev_tag_name,
+                        changed
+                    );
+                } else if lock_changed {
+                    log::warn!(
+                        "Disabled by user, skipping {} despite lock file being changed since {}",
+                        crate_name,
+                        prev_tag_name
+                    );
+                } else {
+                    log::trace!(
+                        "Disabled by user, skipping {} (no changes since {})",
+                        crate_name,
+                        prev_tag_name
+                    );
+                }
+            } else {
+                log::debug!(
+                    "Disabled by user, skipping {} (no {} tag)",
                     crate_name,
                     prev_tag_name
                 );
             }
-        } else {
-            log::debug!(
-                "Disabled by user, skipping {} (no {} tag)",
-                crate_name,
-                prev_tag_name
-            );
         }
+
+        let pkgs = plan::plan(pkgs)?;
+
+        let pkgs: Vec<_> = pkgs
+            .into_iter()
+            .map(|(_, pkg)| pkg)
+            .filter(|p| p.config.release())
+            .collect();
+        if pkgs.is_empty() {
+            log::info!("No packages selected.");
+            return Err(0.into());
+        }
+        release_packages(self, &ws_meta, &ws_config, pkgs.as_slice())
     }
 
-    let pkgs = plan::plan(pkgs)?;
-
-    let pkgs: Vec<_> = pkgs
-        .into_iter()
-        .map(|(_, pkg)| pkg)
-        .filter(|p| p.config.release())
-        .collect();
-    if pkgs.is_empty() {
-        log::info!("No packages selected.");
-        return Err(0.into());
+    pub fn dry_run(&self) -> bool {
+        !self.execute
     }
-    release_packages(args, &ws_meta, &ws_config, pkgs.as_slice())
 }
 
 fn release_packages<'m>(
-    args: &args::ReleaseOpt,
+    args: &ReleaseStep,
     ws_meta: &cargo_metadata::Metadata,
     ws_config: &config::Config,
     pkgs: &'m [PackageRelease],
