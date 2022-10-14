@@ -48,10 +48,6 @@ pub struct ReleaseOpt {
     #[command(flatten)]
     pub config: crate::config::ConfigArgs,
 
-    /// Token to use when uploading
-    #[arg(long)]
-    pub token: Option<String>,
-
     /// Actually perform a release. Dry-run mode is the default
     #[arg(short = 'x', long)]
     pub execute: bool,

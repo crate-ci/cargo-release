@@ -34,10 +34,6 @@ pub struct PublishStep {
 
     #[command(flatten)]
     publish: crate::config::PublishArgs,
-
-    /// Token to use when uploading
-    #[arg(long)]
-    token: Option<String>,
 }
 
 impl PublishStep {
@@ -114,8 +110,7 @@ impl PublishStep {
         super::confirm("Publish", &pkgs, self.no_confirm, dry_run)?;
 
         // STEP 3: cargo publish
-        let token = self.token.as_ref().map(AsRef::as_ref);
-        publish(&ws_meta, &pkgs, token, dry_run)?;
+        publish(&ws_meta, &pkgs, dry_run)?;
 
         super::finish(failed, dry_run)
     }
@@ -134,7 +129,6 @@ impl PublishStep {
 pub fn publish(
     ws_meta: &cargo_metadata::Metadata,
     pkgs: &[plan::PackageRelease],
-    token: Option<&str>,
     dry_run: bool,
 ) -> Result<(), ProcessError> {
     let index = crates_index::Index::new_cargo_default()?;
@@ -178,7 +172,6 @@ pub fn publish(
             pkgid,
             features,
             pkg.config.registry(),
-            token,
             pkg.config.target.as_ref().map(AsRef::as_ref),
         )? {
             return Err(103.into());

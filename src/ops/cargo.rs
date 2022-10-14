@@ -56,7 +56,6 @@ pub fn publish(
     pkgid: Option<&str>,
     features: &Features,
     registry: Option<&str>,
-    token: Option<&str>,
     target: Option<&str>,
 ) -> Result<bool, FatalError> {
     let cargo = cargo();
@@ -76,11 +75,6 @@ pub fn publish(
     if let Some(registry) = registry {
         command.push("--registry");
         command.push(registry);
-    }
-
-    if let Some(token) = token {
-        command.push("--token");
-        command.push(token);
     }
 
     if dry_run {
