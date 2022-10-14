@@ -289,8 +289,7 @@ fn release_packages<'m>(
     }
 
     // STEP 3: cargo publish
-    let token = args.token.as_ref().map(AsRef::as_ref);
-    super::publish::publish(ws_meta, pkgs, token, dry_run)?;
+    super::publish::publish(ws_meta, pkgs, dry_run)?;
 
     // STEP 5: Tag
     super::tag::tag(pkgs, dry_run)?;
