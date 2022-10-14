@@ -186,7 +186,7 @@ pub fn top_level(dir: &Path) -> Result<PathBuf, FatalError> {
     Ok(Path::new(path).to_owned())
 }
 
-pub(crate) fn git_version() -> Result<(), FatalError> {
+pub fn git_version() -> Result<(), FatalError> {
     Command::new("git")
         .arg("--version")
         .output()

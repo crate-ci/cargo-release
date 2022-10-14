@@ -13,7 +13,7 @@ use crate::ops::version;
 use crate::steps::plan;
 use crate::steps::plan::PackageRelease;
 
-pub(crate) fn release_workspace(args: &args::ReleaseOpt) -> Result<(), ProcessError> {
+pub fn release_workspace(args: &args::ReleaseOpt) -> Result<(), ProcessError> {
     let ws_meta = args
         .manifest
         .metadata()

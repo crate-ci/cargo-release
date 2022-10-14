@@ -10,7 +10,7 @@ use crate::ops::replace::Template;
 use crate::ops::version;
 use crate::ops::version::VersionExt as _;
 
-pub(crate) fn load(
+pub fn load(
     args: &config::ConfigArgs,
     ws_meta: &cargo_metadata::Metadata,
 ) -> Result<indexmap::IndexMap<cargo_metadata::PackageId, PackageRelease>, error::FatalError> {
@@ -24,7 +24,7 @@ pub(crate) fn load(
         .collect()
 }
 
-pub(crate) fn plan(
+pub fn plan(
     mut pkgs: indexmap::IndexMap<cargo_metadata::PackageId, PackageRelease>,
 ) -> Result<indexmap::IndexMap<cargo_metadata::PackageId, PackageRelease>, error::FatalError> {
     let mut shared_max: Option<version::Version> = None;

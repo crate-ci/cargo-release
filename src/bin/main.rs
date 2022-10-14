@@ -3,11 +3,7 @@
 
 use clap::Parser;
 
-mod args;
-mod config;
-mod error;
-mod ops;
-mod steps;
+use cargo_release::*;
 
 fn main() {
     let res = run();

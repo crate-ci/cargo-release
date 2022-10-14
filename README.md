@@ -53,6 +53,12 @@ Once you are ready, pass the `--execute` flag.
 - [release-plz](https://crates.io/crates/release-plz)
 - [cargo-workspaces](https://crates.io/crates/cargo-workspaces)
 
+## Semver Compatibility
+
+cargo-release's versioning tracks compatibility for the binaries, not the API.  We upload to
+crates.io to distribute the binary.  If using this as a library, be sure to pin the version
+with a `=` version requirement operator.
+
 ## License
 
 Licensed under either of
