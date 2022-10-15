@@ -38,6 +38,7 @@ pub struct Config {
     pub enable_features: Option<Vec<String>>,
     pub enable_all_features: Option<bool>,
     pub dependent_version: Option<DependentVersion>,
+    pub always_update_version: Option<bool>,
     pub target: Option<String>,
 }
 
@@ -87,6 +88,7 @@ impl Config {
             enable_features: Some(empty.enable_features().to_vec()),
             enable_all_features: Some(empty.enable_all_features()),
             dependent_version: Some(empty.dependent_version()),
+            always_update_version: None,
             target: None,
         }
     }
@@ -172,6 +174,9 @@ impl Config {
         }
         if let Some(dependent_version) = source.dependent_version {
             self.dependent_version = Some(dependent_version);
+        }
+        if let Some(always_update_version) = source.always_update_version {
+            self.always_update_version = Some(always_update_version);
         }
         if let Some(target) = source.target.as_deref() {
             self.target = Some(target.to_owned());
@@ -333,6 +338,10 @@ impl Config {
 
     pub fn dependent_version(&self) -> DependentVersion {
         self.dependent_version.unwrap_or_default()
+    }
+
+    pub fn always_update_version(&self) -> bool {
+        self.always_update_version.unwrap_or_default()
     }
 }
 

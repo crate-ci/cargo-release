@@ -279,7 +279,7 @@ pub fn update_dependent_versions(
                 }
             }
             config::DependentVersion::Fix => {
-                if !dep.req.matches(&version.bare_version) {
+                if pkg.config.always_update_version() || !dep.req.matches(&version.bare_version) {
                     let new_req =
                         crate::ops::version::set_requirement(&dep.req, &version.bare_version)?;
                     if let Some(new_req) = new_req {
@@ -297,6 +297,15 @@ pub fn update_dependent_versions(
                             dry_run,
                         )?;
                     }
+                } else {
+                    log::debug!(
+                        "Not updating {}'s dependency on {} from `{}` \
+                        because it already matches new version `{}`",
+                        dep.pkg.name,
+                        pkg.meta.name,
+                        dep.req,
+                        version.bare_version,
+                    );
                 }
             }
             config::DependentVersion::Upgrade => {
