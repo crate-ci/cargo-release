@@ -54,7 +54,7 @@ log = "0.4"
 env_logger = "0.9"
 globset = { version = "0.4.9", default-features = false }
 dunce = "1.0.3"
-trycmd = "0.14.1"
+trycmd = "0.14.5"
 anyhow = "1.0.66"
 concolor-control = { version = "0.0.7", features = ["auto"] }
 git-conventional = "0.12.0"
