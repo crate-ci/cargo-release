@@ -23,7 +23,7 @@ jobs:
         toolchain: ${{ matrix.rust }}
         profile: minimal
         override: true
-    - uses: Swatinem/rust-cache@v1
+    - uses: Swatinem/rust-cache@v2
     - name: Default features
       run: cargo test --workspace
     - name: All features
@@ -49,7 +49,7 @@ jobs:
         profile: minimal
         override: true
         components: rustfmt
-    - uses: Swatinem/rust-cache@v1
+    - uses: Swatinem/rust-cache@v2
     - name: Check formatting
       run: cargo fmt --all -- --check
   clippy:
@@ -71,7 +71,7 @@ jobs:
         profile: minimal
         override: true
         components: clippy
-    - uses: Swatinem/rust-cache@v1
+    - uses: Swatinem/rust-cache@v2
     - uses: actions-rs/clippy-check@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
