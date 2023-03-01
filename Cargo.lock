@@ -124,7 +124,7 @@ dependencies = [
  "dunce",
  "env_logger",
  "git-conventional",
- "git2 0.15.0",
+ "git2 0.16.1",
  "globset",
  "ignore",
  "indexmap",

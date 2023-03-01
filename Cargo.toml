@@ -32,7 +32,7 @@ pre-release-replacements = [
 cargo_metadata = "0.15"
 crates-index = "0.19"
 # Enabling the feature for `crates-index`
-git2 = { version = "0.15.0", features = ["vendored-libgit2"], default-features = false }
+git2 = { version = "0.16.1", features = ["vendored-libgit2"], default-features = false }
 toml_edit = { version = "0.16.2", features = ["easy"] }
 serde = { version = "1.0", features = ["derive"] }
 semver = "1.0"
