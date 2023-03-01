@@ -33,7 +33,7 @@ cargo_metadata = "0.15"
 crates-index = "0.18"
 # Enabling the feature for `crates-index`
 git2 = { version = "0.15.0", features = ["vendored-libgit2"], default-features = false }
-toml_edit = { version = "0.16.2", features = ["easy"] }
+toml_edit = { version = "0.19.4", features = ["easy"] }
 serde = { version = "1.0", features = ["derive"] }
 semver = "1.0"
 quick-error = "2.0"
