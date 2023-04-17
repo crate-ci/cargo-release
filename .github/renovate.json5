@@ -1,52 +1,61 @@
 {
-  "schedule": [
-    "before 3am on the first day of the month"
+  schedule: [
+    'before 3am on the first day of the month',
   ],
-  "semanticCommits": "enabled",
-  "configMigration": true,
-  "dependencyDashboard": true,
-  "regexManagers": [
+  semanticCommits: 'enabled',
+  configMigration: true,
+  dependencyDashboard: true,
+  regexManagers: [
     {
-      "fileMatch": [
-        "^rust-toolchain\\.toml$",
-        "Cargo.toml$",
-        "clippy.toml$",
-        "\.clippy.toml$",
-        "^\.github/workflows/ci.yml$",
-        "^\.github/workflows/rust-next.yml$",
+      fileMatch: [
+        '^rust-toolchain\\.toml$',
+        'Cargo.toml$',
+        'clippy.toml$',
+        '.clippy.toml$',
+        '^.github/workflows/ci.yml$',
+        '^.github/workflows/rust-next.yml$',
       ],
-      "matchStrings": [
-        "MSRV.*?(?<currentValue>\\d+\\.\\d+(\\.\\d+)?)",
-        "(?<currentValue>\\d+\\.\\d+(\\.\\d+)?).*?MSRV",
+      matchStrings: [
+        'MSRV.*?(?<currentValue>\\d+\\.\\d+(\\.\\d+)?)',
+        '(?<currentValue>\\d+\\.\\d+(\\.\\d+)?).*?MSRV',
       ],
-      "depNameTemplate": "rust",
-      "packageNameTemplate": "rust-lang/rust",
-      "datasourceTemplate": "github-releases",
-    }
-  ],
-  "packageRules": [
-    {
-      "commitMessageTopic": "MSRV",
-      "matchManagers": ["regex"],
-      "matchPackageNames": ["rust"],
-      "stabilityDays": 126,  // 3 releases * 6 weeks per release * 7 days per week
+      depNameTemplate: 'rust',
+      packageNameTemplate: 'rust-lang/rust',
+      datasourceTemplate: 'github-releases',
     },
-    // Goals:
-    // - Rollup safe upgrades to reduce CI runner load
-    // - Have lockfile and manifest in-sync
+  ],
+  packageRules: [
     {
-      "matchManagers": ["cargo"],
-      "matchCurrentVersion": ">=0.1.0",
-      "matchUpdateTypes": ["patch"],
-      "automerge": true,
-      "groupName": "compatible",
+      commitMessageTopic: 'MSRV',
+      matchManagers: [
+        'regex',
+      ],
+      matchPackageNames: [
+        'rust',
+      ],
+      minimumReleaseAge: '126 days',
     },
     {
-      "matchManagers": ["cargo"],
-      "matchCurrentVersion": ">=1.0.0",
-      "matchUpdateTypes": ["minor"],
-      "automerge": true,
-      "groupName": "compatible",
+      matchManagers: [
+        'cargo',
+      ],
+      matchCurrentVersion: '>=0.1.0',
+      matchUpdateTypes: [
+        'patch',
+      ],
+      automerge: true,
+      groupName: 'compatible',
+    },
+    {
+      matchManagers: [
+        'cargo',
+      ],
+      matchCurrentVersion: '>=1.0.0',
+      matchUpdateTypes: [
+        'minor',
+      ],
+      automerge: true,
+      groupName: 'compatible',
     },
   ],
 }
