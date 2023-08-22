@@ -46,7 +46,7 @@ pub struct ReleaseStep {
 impl ReleaseStep {
     pub fn run(&self) -> Result<(), CliError> {
         git::git_version()?;
-        let mut index = crates_index::Index::new_cargo_default()?;
+        let mut index = crate::steps::index::open_crates_io_index()?;
 
         if self.dry_run {
             let _ =
@@ -73,7 +73,11 @@ impl ReleaseStep {
                     pkg.bump(level_or_version, self.metadata.as_deref())?;
                 }
             }
-            if index.crate_(&pkg.meta.name).is_some() {
+            if index
+                .krate(pkg.meta.name.as_str().try_into()?, true)
+                .map(|ik| ik.is_some())
+                .unwrap_or(false)
+            {
                 // Already published, skip it.  Use `cargo release owner` for one-time updates
                 pkg.ensure_owners = false;
             }

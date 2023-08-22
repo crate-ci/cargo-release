@@ -59,7 +59,7 @@ vendored-openssl = ["git2/vendored-openssl"]
 
 [dependencies]
 cargo_metadata = "0.15"
-crates-index = "0.19"
+tame-index = { version = "0.4", features = ["git", "sparse"] }
 git2 = { version = "0.17.2", default-features = false }
 toml_edit = "0.19.10"
 toml = "0.7.4"

@@ -80,7 +80,7 @@ impl PublishStep {
 
         let mut pkgs = plan::plan(pkgs)?;
 
-        let mut index = crates_index::Index::new_cargo_default()?;
+        let mut index = crate::steps::index::open_crates_io_index()?;
         for pkg in pkgs.values_mut() {
             if pkg.config.registry().is_none() && pkg.config.release() {
                 let crate_name = pkg.meta.name.as_str();
@@ -156,7 +156,7 @@ impl PublishStep {
 pub fn publish(
     ws_meta: &cargo_metadata::Metadata,
     pkgs: &[plan::PackageRelease],
-    index: &mut crates_index::Index,
+    index: &mut tame_index::index::ComboIndex,
     dry_run: bool,
 ) -> Result<(), CliError> {
     for pkg in pkgs {

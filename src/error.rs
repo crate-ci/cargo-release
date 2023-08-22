@@ -31,7 +31,7 @@ process_error_from!(anyhow::Error);
 process_error_from!(std::io::Error);
 process_error_from!(semver::Error);
 process_error_from!(ignore::Error);
-process_error_from!(crates_index::Error);
+process_error_from!(tame_index::Error);
 process_error_from!(cargo_metadata::Error);
 process_error_from!(toml::ser::Error);
 process_error_from!(toml_edit::ser::Error);

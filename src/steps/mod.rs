@@ -4,6 +4,7 @@ pub mod changes;
 pub mod commit;
 pub mod config;
 pub mod hook;
+mod index;
 pub mod owner;
 pub mod plan;
 pub mod publish;
@@ -213,7 +214,7 @@ pub fn verify_monotonically_increasing(
 
 pub fn verify_rate_limit(
     pkgs: &[plan::PackageRelease],
-    index: &crates_index::Index,
+    index: &tame_index::index::ComboIndex,
     dry_run: bool,
     level: log::Level,
 ) -> Result<bool, crate::error::CliError> {
@@ -227,7 +228,11 @@ pub fn verify_rate_limit(
     for pkg in pkgs {
         if pkg.config.registry().is_none() && pkg.config.publish() {
             let crate_name = pkg.meta.name.as_str();
-            if index.crate_(crate_name).is_some() {
+            if index
+                .krate(crate_name.try_into()?, true)
+                .map(|ik| ik.is_some())
+                .unwrap_or(false)
+            {
                 existing += 1;
             } else {
                 new += 1;

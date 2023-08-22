@@ -111,7 +111,7 @@ pub fn publish(
 }
 
 pub fn wait_for_publish(
-    index: &mut crates_index::Index,
+    index: &mut tame_index::index::ComboIndex,
     name: &str,
     version: &str,
     timeout: std::time::Duration,
@@ -122,8 +122,10 @@ pub fn wait_for_publish(
         let sleep_time = std::time::Duration::from_secs(1);
         let mut logged = false;
         loop {
-            if let Err(e) = index.update() {
-                log::debug!("crate index update failed with {}", e);
+            if let tame_index::index::ComboIndex::Git(gi) = index {
+                if let Err(e) = gi.fetch() {
+                    log::debug!("crate index update failed with {}", e);
+                }
             }
             if is_published(index, name, version) {
                 break;
@@ -145,12 +147,21 @@ pub fn wait_for_publish(
     Ok(())
 }
 
-pub fn is_published(index: &crates_index::Index, name: &str, version: &str) -> bool {
-    let crate_data = index.crate_(name);
-    crate_data
-        .iter()
-        .flat_map(|c| c.versions().iter())
-        .any(|v| v.version() == version)
+pub fn is_published(index: &tame_index::index::ComboIndex, name: &str, version: &str) -> bool {
+    match index.krate(name.try_into().expect("crate name is invalid"), true) {
+        Ok(Some(crate_data)) => crate_data
+            .versions
+            .into_iter()
+            .any(|iv| iv.version == version),
+        Ok(None) => false,
+        Err(err) => {
+            // For both http and git indices, this _might_ be an error that goes away in
+            // a future call, but at least printing out something should give the user
+            // an indication something is amiss
+            log::warn!("failed to read metadata for {name}: {err:#}");
+            false
+        }
+    }
 }
 
 pub fn set_workspace_version(
