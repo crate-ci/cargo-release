@@ -80,13 +80,16 @@ impl PublishStep {
 
         let mut pkgs = plan::plan(pkgs)?;
 
-        let mut index = crate::steps::index::open_crates_io_index()?;
+        let mut index = crate::steps::index::CratesIoIndex::open()?;
         for pkg in pkgs.values_mut() {
             if pkg.config.registry().is_none() && pkg.config.release() {
                 let crate_name = pkg.meta.name.as_str();
                 let version = pkg.planned_version.as_ref().unwrap_or(&pkg.initial_version);
-                if crate::ops::cargo::is_published(&index, crate_name, &version.full_version_string)
-                {
+                if crate::ops::cargo::is_published(
+                    &mut index,
+                    crate_name,
+                    &version.full_version_string,
+                ) {
                     let _ = crate::ops::shell::warn(format!(
                         "disabled due to previous publish ({}), skipping {}",
                         version.full_version_string, crate_name
@@ -131,7 +134,8 @@ impl PublishStep {
         )?;
 
         failed |= !super::verify_metadata(&selected_pkgs, dry_run, log::Level::Error)?;
-        failed |= !super::verify_rate_limit(&selected_pkgs, &index, dry_run, log::Level::Error)?;
+        failed |=
+            !super::verify_rate_limit(&selected_pkgs, &mut index, dry_run, log::Level::Error)?;
 
         // STEP 1: Release Confirmation
         super::confirm("Publish", &selected_pkgs, self.no_confirm, dry_run)?;
@@ -156,7 +160,7 @@ impl PublishStep {
 pub fn publish(
     ws_meta: &cargo_metadata::Metadata,
     pkgs: &[plan::PackageRelease],
-    index: &mut tame_index::index::ComboIndex,
+    index: &mut crate::steps::index::CratesIoIndex,
     dry_run: bool,
 ) -> Result<(), CliError> {
     for pkg in pkgs {

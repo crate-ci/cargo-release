@@ -4,7 +4,7 @@ resolver = "2"
 [workspace.package]
 license = "MIT OR Apache-2.0"
 edition = "2021"
-rust-version = "1.66.0"  # MSRV
+rust-version = "1.66.0" # MSRV
 include = [
   "build.rs",
   "src/**/*",
@@ -13,7 +13,7 @@ include = [
   "LICENSE*",
   "README.md",
   "benches/**/*",
-  "examples/**/*"
+  "examples/**/*",
 ]
 
 [package]
@@ -35,12 +35,12 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [package.metadata.release]
 pre-release-replacements = [
-  {file="README.md", search="Current release: [a-z0-9\\.-]+", replace="Current release: {{version}}"} ,
-  {file="CHANGELOG.md", search="Unreleased", replace="{{version}}", min=1},
-  {file="CHANGELOG.md", search="\\.\\.\\.HEAD", replace="...{{tag_name}}", exactly=1},
-  {file="CHANGELOG.md", search="ReleaseDate", replace="{{date}}", min=1},
-  {file="CHANGELOG.md", search="<!-- next-header -->", replace="<!-- next-header -->\n## [Unreleased] - ReleaseDate\n", exactly=1},
-  {file="CHANGELOG.md", search="<!-- next-url -->", replace="<!-- next-url -->\n[Unreleased]: https://github.com/crate-ci/cargo-release/compare/{{tag_name}}...HEAD", exactly=1},
+  { file = "README.md", search = "Current release: [a-z0-9\\.-]+", replace = "Current release: {{version}}" },
+  { file = "CHANGELOG.md", search = "Unreleased", replace = "{{version}}", min = 1 },
+  { file = "CHANGELOG.md", search = "\\.\\.\\.HEAD", replace = "...{{tag_name}}", exactly = 1 },
+  { file = "CHANGELOG.md", search = "ReleaseDate", replace = "{{date}}", min = 1 },
+  { file = "CHANGELOG.md", search = "<!-- next-header -->", replace = "<!-- next-header -->\n## [Unreleased] - ReleaseDate\n", exactly = 1 },
+  { file = "CHANGELOG.md", search = "<!-- next-url -->", replace = "<!-- next-url -->\n[Unreleased]: https://github.com/crate-ci/cargo-release/compare/{{tag_name}}...HEAD", exactly = 1 },
 ]
 
 [features]
@@ -59,7 +59,7 @@ vendored-openssl = ["git2/vendored-openssl"]
 
 [dependencies]
 cargo_metadata = "0.15"
-tame-index = { version = "0.4", features = ["git", "sparse"] }
+tame-index = "0.5"
 git2 = { version = "0.17.2", default-features = false }
 toml_edit = "0.19.10"
 toml = "0.7.4"
@@ -87,6 +87,11 @@ trycmd = "0.14.16"
 anyhow = "1.0.71"
 concolor-control = { version = "0.0.7", features = ["auto"] }
 git-conventional = "0.12.3"
+
+[dependencies.reqwest]
+version = "0.11"
+default-features = false
+features = ["blocking", "rustls-tls", "gzip"]
 
 [dev-dependencies]
 assert_fs = "1.0"

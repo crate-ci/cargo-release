@@ -43,7 +43,7 @@ pub struct ReplaceStep {
 impl ReplaceStep {
     pub fn run(&self) -> Result<(), CliError> {
         git::git_version()?;
-        let index = crate::steps::index::open_crates_io_index()?;
+        let mut index = crate::steps::index::CratesIoIndex::open()?;
 
         if self.dry_run {
             let _ =
@@ -83,7 +83,7 @@ impl ReplaceStep {
             {
                 let version = &pkg.initial_version;
                 if !crate::ops::cargo::is_published(
-                    &index,
+                    &mut index,
                     crate_name,
                     &version.full_version_string,
                 ) {
