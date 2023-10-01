@@ -174,7 +174,7 @@ dependencies = [
  "bstr",
  "cargo-test-macro",
  "cargo-test-support",
- "cargo_metadata",
+ "cargo_metadata 0.18.0",
  "clap",
  "clap-cargo",
  "concolor-control",
@@ -273,6 +273,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "cargo_metadata"
+version = "0.18.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fb9ac64500cc83ce4b9f8dafa78186aa008c8dea77a09b94cd307fd0cd5022a8"
+dependencies = [
+ "camino",
+ "cargo-platform",
+ "semver",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "cc"
 version = "1.0.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -304,7 +318,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "383f21342a464d4af96e9a4cad22a0b4f2880d4a5b3bbf5c9654dd1d9a224ee4"
 dependencies = [
  "anstyle",
- "cargo_metadata",
+ "cargo_metadata 0.17.0",
  "clap",
 ]
 

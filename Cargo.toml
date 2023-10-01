@@ -58,7 +58,7 @@ vendored-libgit2 = ["git2/vendored-libgit2"]
 vendored-openssl = ["git2/vendored-openssl"]
 
 [dependencies]
-cargo_metadata = "0.17"
+cargo_metadata = "0.18"
 crates-index = "0.19"
 git2 = { version = "0.17.2", default-features = false }
 toml_edit = "0.19.14"
