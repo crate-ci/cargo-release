@@ -193,7 +193,7 @@ pub fn verify_monotonically_increasing(
                 let _ = crate::ops::shell::log(
                     level,
                     format!(
-                        "cannot downgrade {} from {} to {}",
+                        "cannot downgrade {} to {} from {}",
                         crate_name, version.full_version, pkg.initial_version.full_version
                     ),
                 );
