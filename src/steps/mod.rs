@@ -332,14 +332,6 @@ pub fn verify_metadata(
     Ok(success)
 }
 
-
-pub fn warn_changed(
-    ws_meta: &cargo_metadata::Metadata,
-    pkgs: &[plan::PackageRelease],
-) -> Result<(), crate::error::CliError> {
-    detect_changed(ws_meta, pkgs, false).map(|_| ())
-}
-
 pub fn detect_changed(
     ws_meta: &cargo_metadata::Metadata,
     pkgs: &[plan::PackageRelease],
