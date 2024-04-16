@@ -73,7 +73,7 @@ pub fn plan(
     Ok(pkgs)
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PackageRelease {
     pub meta: cargo_metadata::Package,
     pub manifest_path: PathBuf,
@@ -328,7 +328,7 @@ fn find_dependents<'w>(
     })
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Dependency {
     pub pkg: cargo_metadata::Package,
     pub req: semver::VersionReq,
