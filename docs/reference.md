@@ -34,6 +34,7 @@ Options:
       --unpublished                 Process all packages whose current version is unpublished
   -m, --metadata <METADATA>         Semver metadata
   -x, --execute                     Actually perform a release. Dry-run mode is the default
+      --exclude-unchanged           Exclude unchanged packages
       --no-confirm                  Skip release confirmation and version preview
       --prev-tag-name <NAME>        The name of tag for the previous release
   -c, --config <PATH>               Custom config file
