@@ -131,7 +131,7 @@ vendored-openssl = ["git2/vendored-openssl"]
 
 [dependencies]
 cargo_metadata = "0.18"
-tame-index = "0.10"
+tame-index = "0.11.0"
 reqwest = { version = "0.11", default-features = false, features = ["blocking", "rustls-tls", "gzip"] }
 git2 = { version = "0.18.3", default-features = false }
 toml_edit = { version = "0.22.12", features = ["serde"] }
