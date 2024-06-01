@@ -313,6 +313,7 @@ impl ReleaseStep {
         super::owner::ensure_owners(&selected_pkgs, dry_run)?;
 
         // STEP 5: Tag
+        super::tag::show_status(&selected_pkgs);
         super::tag::tag(&selected_pkgs, dry_run)?;
 
         // STEP 6: git push

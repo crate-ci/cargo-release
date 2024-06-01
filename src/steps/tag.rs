@@ -134,6 +134,7 @@ impl TagStep {
         )?;
 
         // STEP 1: Release Confirmation
+        show_status(&selected_pkgs);
         super::confirm("Tag", &selected_pkgs, self.no_confirm, dry_run)?;
 
         // STEP 5: Tag
@@ -188,4 +189,19 @@ pub fn tag(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliError>
     }
 
     Ok(())
+}
+
+// this is split out into a seperate function since it needs to be run before
+// the confirmation check when running the tag step as a seperate command.
+pub fn show_status(pkgs: &[plan::PackageRelease]) {
+    let mut tags: Vec<_> = pkgs
+        .iter()
+        .map(|pkg| pkg.planned_tag.as_ref().map(|tag| tag.as_str()))
+        // Option implements IntoIterator, so this
+        // removes None while unwrapping Some
+        .flatten()
+        .collect();
+    tags.sort();
+    tags.dedup();
+    let _ = crate::ops::shell::status("Tagging", tags.join(", "));
 }
