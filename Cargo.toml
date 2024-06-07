@@ -160,7 +160,7 @@ anstyle = "1.0.7"
 [dev-dependencies]
 assert_fs = "1.1"
 predicates = "3.1"
-snapbox = "0.4.16"
+snapbox = "0.6.0"
 cargo-test-macro.git = "https://github.com/rust-lang/cargo"
 cargo-test-support.git = "https://github.com/rust-lang/cargo"
 
