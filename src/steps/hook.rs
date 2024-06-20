@@ -39,6 +39,10 @@ pub struct HookStep {
     #[arg(short = 'n', long, conflicts_with = "execute", hide = true)]
     dry_run: bool,
 
+    /// Exclude unchanged packages
+    #[arg(long)]
+    exclude_unchanged: bool,
+
     /// Skip release confirmation and version preview
     #[arg(long)]
     no_confirm: bool,
@@ -126,7 +130,7 @@ impl HookStep {
             log::Level::Warn,
         )?;
 
-        super::warn_changed(&ws_meta, &selected_pkgs)?;
+        let selected_pkgs = super::detect_changed(&ws_meta, &selected_pkgs, self.exclude_unchanged)?;
 
         failed |= !super::verify_git_branch(
             ws_meta.workspace_root.as_std_path(),

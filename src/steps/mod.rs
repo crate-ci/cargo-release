@@ -332,10 +332,11 @@ pub fn verify_metadata(
     Ok(success)
 }
 
-pub fn warn_changed(
+pub fn detect_changed(
     ws_meta: &cargo_metadata::Metadata,
     pkgs: &[plan::PackageRelease],
-) -> Result<(), crate::error::CliError> {
+    exclude_unchanged: bool
+) -> Result<Vec<plan::PackageRelease>, crate::error::CliError> {
     let mut changed_pkgs = std::collections::HashSet::new();
     for pkg in pkgs {
         let version = pkg.planned_version.as_ref().unwrap_or(&pkg.initial_version);
@@ -364,10 +365,18 @@ pub fn warn_changed(
                     changed_pkgs.insert(&pkg.meta.id);
                     changed_pkgs.extend(pkg.dependents.iter().map(|d| &d.pkg.id));
                 } else {
-                    let _ = crate::ops::shell::warn(format!(
-                        "updating {} to {} despite no changes made since tag {}",
-                        crate_name, version.full_version_string, prior_tag_name
-                    ));
+                    if exclude_unchanged {
+                        log::debug!(
+                            "Excluding {}, no changes made since tag {}",
+                            crate_name,
+                            prior_tag_name,
+                        );
+                    } else {
+                        let _ = crate::ops::shell::warn(format!(
+                            "updating {} to {} despite no changes made since tag {}",
+                            crate_name, version.full_version_string, prior_tag_name
+                        ));
+                    }
                 }
             } else {
                 log::debug!(
@@ -384,7 +393,13 @@ pub fn warn_changed(
         }
     }
 
-    Ok(())
+    let packages = if exclude_unchanged {
+        pkgs.iter().filter(|p| changed_pkgs.contains(&p.meta.id)).cloned().collect()
+    } else {
+        pkgs.to_vec()
+    };
+
+    Ok(packages)
 }
 
 pub fn find_shared_versions(
