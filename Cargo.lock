@@ -2158,9 +2158,9 @@ checksum = "2047c6ded9c721764247e62cd3b03c09ffc529b2ba5b10ec482ae507a4a70160"
 
 [[package]]
 name = "tame-index"
-version = "0.11.1"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "44a98d58caab3de29c6cb538054c7d994b3d7e6eec483a9dfca02f92027f7686"
+checksum = "e9632d46ad4e0c6a07d4354fc43c6eae4654a09beef8e9e7c7c899f983185c45"
 dependencies = [
  "camino",
  "crossbeam-channel",
@@ -2340,9 +2340,9 @@ dependencies = [
 
 [[package]]
 name = "toml-span"
-version = "0.2.0"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "369db38ce6d1fc320a54ea3f032d07c07a232ca19c40e287246aff06d57c2abe"
+checksum = "ce0e1be49e3b9bf33d1a8077c081a3b7afcfc94e4bc1002c80376784381bc106"
 dependencies = [
  "smallvec",
 ]
