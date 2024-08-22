@@ -1,6 +1,7 @@
 # cargo release
 
-Features
+## Features
+
 - Ensure you are in a good state for release, including:
   - Right branch
   - Up-to-date with remote
