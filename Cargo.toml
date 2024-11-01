@@ -167,7 +167,7 @@ assert_fs = "1.1"
 predicates = "3.1"
 snapbox = "0.6.16"
 cargo-test-macro = "0.3"
-cargo-test-support = "0.3"
+cargo-test-support = "0.4"
 
 [profile.release]
 panic = "abort"

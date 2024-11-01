@@ -306,9 +306,9 @@ checksum = "82c6cbe0807294ca78d811d1e4995ddb6516c6c763c7a03493c4ba02b9e09215"
 
 [[package]]
 name = "cargo-test-support"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a816b64664799fb248c06ca28b989ee22ef6d9f83c0495e28954a56d4e9a27ba"
+checksum = "11d531c7b482c299a97cbad8f269820e57fcac21946c6aae2af362ea41600f7d"
 dependencies = [
  "anstream",
  "anstyle",
@@ -331,7 +331,7 @@ dependencies = [
  "toml",
  "url",
  "walkdir",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -2296,9 +2296,9 @@ dependencies = [
 
 [[package]]
 name = "tar"
-version = "0.4.40"
+version = "0.4.42"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b16afcea1f22891c49a00c751c7b63b2233284064f11a200fc624137c51e2ddb"
+checksum = "4ff6c40d3aedb5e06b57c6f669ad17ab063dd1e63d977c6a88e7f4dfa4f04020"
 dependencies = [
  "filetime",
  "libc",
