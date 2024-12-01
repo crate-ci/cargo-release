@@ -305,9 +305,9 @@ checksum = "82c6cbe0807294ca78d811d1e4995ddb6516c6c763c7a03493c4ba02b9e09215"
 
 [[package]]
 name = "cargo-test-support"
-version = "0.4.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11d531c7b482c299a97cbad8f269820e57fcac21946c6aae2af362ea41600f7d"
+checksum = "74b6b88572f52991da0232b3c61dd23549bc6af06a2a3e2b8422df93fc36cbd1"
 dependencies = [
  "anstream",
  "anstyle",
@@ -1499,9 +1499,9 @@ dependencies = [
 
 [[package]]
 name = "pasetors"
-version = "0.6.8"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b36d47c66f2230dd1b7143d9afb2b4891879020210eddf2ccb624e529b96dba"
+checksum = "b719f62f9b77cfadf01500984ab26c7bda71b3f1e497e9dbb055ff466dbe2a86"
 dependencies = [
  "ct-codecs",
  "ed25519-compact",
