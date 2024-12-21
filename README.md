@@ -1,7 +1,7 @@
 # cargo release
 `cargo-release` is a tool designed to simplify and automate the release process for Rust projects. It ensures a smooth and reliable workflow, including version management, publishing, and tagging.
 
-Features
+## Features
 - Ensure you are in a good state for release, including:
   - Right branch
   - Up-to-date with remote
