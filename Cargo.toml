@@ -127,7 +127,7 @@ vendored-libgit2 = ["git2/vendored-libgit2"]
 vendored-openssl = ["git2/vendored-openssl"]
 
 [dependencies]
-cargo_metadata = "0.18"
+cargo_metadata = "0.19"
 # Use this with default-features set to "true" (implicitly) so that reqwest,
 # a transitive dependency, is compiled with support for both webpki
 # certificates AND native certificates. We want support for both to be
