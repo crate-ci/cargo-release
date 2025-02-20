@@ -380,8 +380,8 @@ pub enum Command {
 impl Command {
     pub fn args(&self) -> Vec<&str> {
         match self {
-            Command::Line(ref s) => vec![s.as_str()],
-            Command::Args(ref a) => a.iter().map(|s| s.as_str()).collect(),
+            Command::Line(s) => vec![s.as_str()],
+            Command::Args(a) => a.iter().map(|s| s.as_str()).collect(),
         }
     }
 }

@@ -68,9 +68,7 @@ impl PushStep {
 
         let (_selected_pkgs, excluded_pkgs) = self.workspace.partition_packages(&ws_meta);
         for excluded_pkg in excluded_pkgs {
-            let pkg = if let Some(pkg) = pkgs.get_mut(&excluded_pkg.id) {
-                pkg
-            } else {
+            let Some(pkg) = pkgs.get_mut(&excluded_pkg.id) else {
                 // Either not in workspace or marked as `release = false`.
                 continue;
             };

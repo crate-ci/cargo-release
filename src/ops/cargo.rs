@@ -389,9 +389,7 @@ fn upgrade_req(
         log::debug!("unsupported dependency {}", name);
         return false;
     };
-    let existing_req = if let Ok(existing_req) = semver::VersionReq::parse(existing_req_str) {
-        existing_req
-    } else {
+    let Ok(existing_req) = semver::VersionReq::parse(existing_req_str) else {
         log::debug!("unsupported dependency req {}={}", name, existing_req_str);
         return false;
     };
