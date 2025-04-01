@@ -135,7 +135,7 @@ cargo_metadata = "0.19"
 # present, and then to let the user _select_ through configuration which
 # one they want to be used.
 tame-index = { version = "0.18", features = ["sparse", "native-certs"] }
-git2 = { version = "0.19.0", default-features = false }
+git2 = { version = "0.20.0", default-features = false }
 toml_edit = { version = "0.22.12", features = ["serde"] }
 toml = "0.8.12"
 serde = { version = "1.0", features = ["derive"] }
