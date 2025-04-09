@@ -3,6 +3,10 @@
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Internal
+
+- Depednency updates
+
 ## [0.25.17] - 2025-02-05
 
 ### Fixes
