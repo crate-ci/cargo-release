@@ -578,7 +578,7 @@ pub fn load_workspace_config(
             let pkg = ws_meta
                 .packages
                 .iter()
-                .find(|p| ws_meta.workspace_members.iter().any(|m| *m == p.id))
+                .find(|p| ws_meta.workspace_members.contains(&p.id))
                 .unwrap();
             resolve_config(
                 ws_meta.workspace_root.as_std_path(),

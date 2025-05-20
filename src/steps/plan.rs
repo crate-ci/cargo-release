@@ -317,7 +317,7 @@ fn find_dependents<'w>(
     pkg_meta: &'w cargo_metadata::Package,
 ) -> impl Iterator<Item = (&'w cargo_metadata::Package, &'w cargo_metadata::Dependency)> {
     ws_meta.packages.iter().filter_map(move |p| {
-        if ws_meta.workspace_members.iter().any(|m| *m == p.id) {
+        if ws_meta.workspace_members.contains(&p.id) {
             p.dependencies
                 .iter()
                 .find(|d| d.name == pkg_meta.name)
