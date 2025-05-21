@@ -287,7 +287,6 @@ dependencies = [
  "itertools",
  "log",
  "maplit",
- "once_cell",
  "predicates",
  "quick-error",
  "regex",
