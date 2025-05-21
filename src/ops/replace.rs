@@ -4,7 +4,7 @@ use std::path::Path;
 use crate::config::Replace;
 use crate::error::CargoResult;
 
-pub static NOW: once_cell::sync::Lazy<String> = once_cell::sync::Lazy::new(|| {
+pub static NOW: std::sync::LazyLock<String> = std::sync::LazyLock::new(|| {
     time::OffsetDateTime::now_utc()
         .format(time::macros::format_description!("[year]-[month]-[day]"))
         .unwrap()
