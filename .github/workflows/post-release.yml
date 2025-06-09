@@ -72,7 +72,7 @@ jobs:
           rust: stable
           target: aarch64-apple-darwin
         - build: win-msvc
-          os: windows-2019
+          os: windows-2022
           rust: stable
           target: x86_64-pc-windows-msvc
     runs-on: ${{ matrix.os }}
@@ -101,7 +101,7 @@ jobs:
         mkdir -p "$staging"/doc
         cp {README.md,LICENSE-*} "$staging/"
         cp {CHANGELOG.md,docs/*} "$staging/doc/"
-        if [ "${{ matrix.os }}" = "windows-2019" ]; then
+        if [ "${{ matrix.os }}" = "windows-2022" ]; then
           cp "target/${{ matrix.target }}/release/${{ env.BIN_NAME }}.exe" "$staging/"
           ls -l "$staging"
           cd "$staging"
