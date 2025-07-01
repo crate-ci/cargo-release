@@ -143,7 +143,7 @@ cargo_metadata = "0.19"
 # certificates AND native certificates. We want support for both to be
 # present, and then to let the user _select_ through configuration which
 # one they want to be used.
-tame-index = { version = "0.21", features = ["sparse", "native-certs"] }
+tame-index = { version = "0.22", features = ["sparse", "native-certs"] }
 git2 = { version = "0.20.1", default-features = false }
 toml_edit = { version = "0.22.12", features = ["serde"] }
 toml = "0.8.12"
