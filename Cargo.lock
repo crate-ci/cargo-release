@@ -296,8 +296,8 @@ dependencies = [
  "snapbox",
  "tame-index",
  "time",
- "toml",
- "toml_edit 0.22.24",
+ "toml 0.9.1",
+ "toml_edit 0.23.0",
  "trycmd",
 ]
 
@@ -331,7 +331,7 @@ dependencies = [
  "snapbox",
  "tar",
  "time",
- "toml",
+ "toml 0.8.20",
  "url",
  "walkdir",
  "windows-sys 0.59.0",
@@ -800,7 +800,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "976dd42dc7e85965fe702eb8164f21f450704bdde31faefd6471dba214cb594e"
 dependencies = [
  "libc",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -2131,7 +2131,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys 0.9.3",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -2551,7 +2551,7 @@ dependencies = [
  "getrandom 0.3.1",
  "once_cell",
  "rustix 1.0.5",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -2716,6 +2716,21 @@ dependencies = [
  "serde_spanned 0.6.8",
  "toml_datetime 0.6.8",
  "toml_edit 0.22.24",
+]
+
+[[package]]
+name = "toml"
+version = "0.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0207d6ed1852c2a124c1fbec61621acb8330d2bf969a5d0643131e9affd985a5"
+dependencies = [
+ "indexmap",
+ "serde",
+ "serde_spanned 1.0.0",
+ "toml_datetime 0.7.0",
+ "toml_parser",
+ "toml_writer",
+ "winnow",
 ]
 
 [[package]]

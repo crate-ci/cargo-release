@@ -145,8 +145,8 @@ cargo_metadata = "0.19"
 # one they want to be used.
 tame-index = { version = "0.22", features = ["sparse", "native-certs"] }
 git2 = { version = "0.20.1", default-features = false }
-toml_edit = { version = "0.22.12", features = ["serde"] }
-toml = "0.8.12"
+toml_edit = { version = "0.23.0", features = ["serde"] }
+toml = "0.9.0"
 serde = { version = "1.0", features = ["derive"] }
 semver = "1.0"
 quick-error = "2.0"
