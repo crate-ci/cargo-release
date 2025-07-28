@@ -56,6 +56,10 @@ verify what it will do.
 
 Once you are ready, pass the `--execute` flag.
 
+*Note:* the packaging and verifying steps will list the current version and not
+the bumped version because `cargo release` delegates to `cargo publish` which
+does not know about the in-memory-only version bump ([#890](https://github.com/crate-ci/cargo-release/issues/890)).
+
 ## Related tools
 
 - [release-pr Action](https://github.com/cargo-bins/release-pr)
