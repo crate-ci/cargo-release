@@ -320,7 +320,7 @@ fn find_dependents<'w>(
         if ws_meta.workspace_members.contains(&p.id) {
             p.dependencies
                 .iter()
-                .find(|d| d.name == pkg_meta.name)
+                .find(|d| d.name == pkg_meta.name.as_str())
                 .map(|d| (p, d))
         } else {
             None

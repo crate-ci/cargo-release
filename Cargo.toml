@@ -5,7 +5,7 @@ resolver = "2"
 repository = "https://github.com/crate-ci/cargo-release"
 license = "MIT OR Apache-2.0"
 edition = "2024"
-rust-version = "1.85"  # MSRV
+rust-version = "1.87"  # MSRV
 include = [
   "build.rs",
   "src/**/*",
@@ -137,7 +137,7 @@ vendored-libgit2 = ["git2/vendored-libgit2"]
 vendored-openssl = ["git2/vendored-openssl"]
 
 [dependencies]
-cargo_metadata = "0.19"
+cargo_metadata = "0.21"
 # Use this with default-features set to "true" (implicitly) so that reqwest,
 # a transitive dependency, is compiled with support for both webpki
 # certificates AND native certificates. We want support for both to be
@@ -159,7 +159,7 @@ dirs-next = "2.0"
 ignore = "0.4"
 itertools = "0.14"
 clap = { version = "4.5.4", features = ["derive", "wrap_help"] }
-clap-cargo = { version = "0.15.0", features = ["cargo_metadata"] }
+clap-cargo = { version = "0.16.0", features = ["cargo_metadata"] }
 log = "0.4"
 env_logger = "0.11"
 globset = { version = "0.4.14", default-features = false }
