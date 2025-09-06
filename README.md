@@ -26,13 +26,13 @@ Features include:
 
 Current release: 0.25.18
 
-```console,ignore
-$ cargo install cargo-release
+```sh
+cargo install cargo-release
 ```
 
 ## Usage
 
-```console,ignore
+```console
 $ cargo release [level]
 <dry-run output>
 $ cargo release [level] --execute
