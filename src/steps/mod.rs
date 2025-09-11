@@ -608,7 +608,6 @@ impl clap::builder::TypedValueParser for TargetVersionParser {
         &self,
     ) -> Option<Box<dyn Iterator<Item = clap::builder::PossibleValue> + '_>> {
         let inner_parser = clap::builder::EnumValueParser::<BumpLevel>::new();
-        #[allow(clippy::needless_collect)] // Erasing a lifetime
         inner_parser.possible_values().map(|ps| {
             let ps = ps.collect::<Vec<_>>();
             let ps: Box<dyn Iterator<Item = clap::builder::PossibleValue> + '_> =
