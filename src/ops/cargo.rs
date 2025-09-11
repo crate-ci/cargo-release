@@ -50,7 +50,6 @@ pub fn package_content(manifest_path: &Path) -> CargoResult<Vec<std::path::PathB
     }
 }
 
-#[allow(clippy::too_many_arguments)]
 pub fn publish(
     dry_run: bool,
     verify: bool,
