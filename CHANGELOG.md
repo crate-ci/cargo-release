@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Fixes
+
+- Ensure `--unpublished` can select packages without any other packages selected
+
 ## [0.25.18] - 2025-04-09
 
 ### Internal
