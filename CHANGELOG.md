@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [0.25.19] - 2025-09-26
+
 ### Fixes
 
 - Ensure `--unpublished` can select packages without any other packages selected
@@ -783,7 +785,8 @@ git.
 * Doc update
 
 <!-- next-url -->
-[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v0.25.18...HEAD
+[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v0.25.19...HEAD
+[0.25.19]: https://github.com/crate-ci/cargo-release/compare/v0.25.18...v0.25.19
 [0.25.18]: https://github.com/crate-ci/cargo-release/compare/v0.25.17...v0.25.18
 [0.25.17]: https://github.com/crate-ci/cargo-release/compare/v0.25.16...v0.25.17
 [0.25.16]: https://github.com/crate-ci/cargo-release/compare/v0.25.15...v0.25.16
