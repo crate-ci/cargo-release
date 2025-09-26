@@ -64,7 +64,12 @@ impl ReplaceStep {
         let ws_config = crate::config::load_workspace_config(&config, &ws_meta)?;
         let mut pkgs = plan::load(&config, &ws_meta)?;
 
-        let (_selected_pkgs, excluded_pkgs) = self.workspace.partition_packages(&ws_meta);
+        let (_selected_pkgs, excluded_pkgs) =
+            if self.unpublished && self.workspace == clap_cargo::Workspace::default() {
+                ws_meta.packages.iter().partition(|_| false)
+            } else {
+                self.workspace.partition_packages(&ws_meta)
+            };
         for excluded_pkg in excluded_pkgs {
             let Some(pkg) = pkgs.get_mut(&excluded_pkg.id) else {
                 // Either not in workspace or marked as `release = false`.
