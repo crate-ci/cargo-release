@@ -4,7 +4,7 @@
 //! crates.io to distribute the binary.  If using this as a library, be sure to pin the version
 //! with a `=` version requirement operator.
 
-#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 #![warn(clippy::print_stderr)]
 #![warn(clippy::print_stdout)]
 
