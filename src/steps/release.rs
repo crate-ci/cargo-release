@@ -68,10 +68,10 @@ impl ReleaseStep {
                 // they don't care about any changes from before this tag.
                 pkg.set_prior_tag(prev_tag.to_owned());
             }
-            if pkg.config.release() {
-                if let Some(level_or_version) = &self.level_or_version {
-                    pkg.bump(level_or_version, self.metadata.as_deref())?;
-                }
+            if pkg.config.release()
+                && let Some(level_or_version) = &self.level_or_version
+            {
+                pkg.bump(level_or_version, self.metadata.as_deref())?;
             }
             if index.has_krate(
                 pkg.config.registry(),
@@ -137,20 +137,16 @@ impl ReleaseStep {
                         ));
                     } else {
                         log::trace!(
-                            "disabled by user, skipping {} (no changes since {})",
-                            crate_name,
-                            prior_tag_name
+                            "disabled by user, skipping {crate_name} (no changes since {prior_tag_name})"
                         );
                     }
                 } else {
                     log::debug!(
-                        "disabled by user, skipping {} (no {} tag)",
-                        crate_name,
-                        prior_tag_name
+                        "disabled by user, skipping {crate_name} (no {prior_tag_name} tag)"
                     );
                 }
             } else {
-                log::debug!("disabled by user, skipping {} (no tag found)", crate_name,);
+                log::debug!("disabled by user, skipping {crate_name} (no tag found)",);
             }
         }
 

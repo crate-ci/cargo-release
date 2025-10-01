@@ -79,7 +79,7 @@ impl PublishStep {
             pkg.config.release = Some(false);
 
             let crate_name = pkg.meta.name.as_str();
-            log::debug!("disabled by user, skipping {}", crate_name,);
+            log::debug!("disabled by user, skipping {crate_name}",);
         }
 
         let mut pkgs = plan::plan(pkgs)?;

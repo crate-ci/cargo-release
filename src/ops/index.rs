@@ -149,13 +149,12 @@ impl RemoteIndex {
         if let Some(etag) = res
             .headers()
             .get(tame_index::external::reqwest::header::ETAG)
+            && let Ok(etag) = etag.to_str()
         {
-            if let Ok(etag) = etag.to_str() {
-                if let Some(i) = self.etags.iter().position(|(krate, _)| krate == name) {
-                    etag.clone_into(&mut self.etags[i].1);
-                } else {
-                    self.etags.push((name.to_owned(), etag.to_owned()));
-                }
+            if let Some(i) = self.etags.iter().position(|(krate, _)| krate == name) {
+                etag.clone_into(&mut self.etags[i].1);
+            } else {
+                self.etags.push((name.to_owned(), etag.to_owned()));
             }
         }
 

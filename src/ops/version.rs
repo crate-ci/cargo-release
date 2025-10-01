@@ -60,8 +60,7 @@ impl VersionExt for semver::Version {
         if let Some((pre_ext, pre_ext_ver)) = prerelease_id_version(self)? {
             if pre_ext == VERSION_BETA || pre_ext == VERSION_RC {
                 Err(anyhow::format_err!(
-                    "unsupported release level {}, only major, minor, and patch are supported",
-                    VERSION_ALPHA
+                    "unsupported release level {VERSION_ALPHA}, only major, minor, and patch are supported"
                 ))
             } else {
                 let new_ext_ver = if pre_ext == VERSION_ALPHA {
@@ -83,8 +82,7 @@ impl VersionExt for semver::Version {
         if let Some((pre_ext, pre_ext_ver)) = prerelease_id_version(self)? {
             if pre_ext == VERSION_RC {
                 Err(anyhow::format_err!(
-                    "unsupported release level {}, only major, minor, and patch are supported",
-                    VERSION_BETA
+                    "unsupported release level {VERSION_BETA}, only major, minor, and patch are supported"
                 ))
             } else {
                 let new_ext_ver = if pre_ext == VERSION_BETA {
@@ -200,15 +198,14 @@ fn set_comparator(
         }
         semver::Op::Exact => Ok(assign_partial_req(version, pred)),
         semver::Op::Greater | semver::Op::GreaterEq | semver::Op::Less | semver::Op::LessEq => Err(
-            anyhow::format_err!("support for modifying {} is currently unsupported", pred),
+            anyhow::format_err!("support for modifying {pred} is currently unsupported"),
         ),
         semver::Op::Tilde => Ok(assign_partial_req(version, pred)),
         semver::Op::Caret => Ok(assign_partial_req(version, pred)),
         _ => {
             log::debug!("new predicate added");
             Err(anyhow::format_err!(
-                "support for modifying {} is currently unsupported",
-                pred
+                "support for modifying {pred} is currently unsupported"
             ))
         }
     }

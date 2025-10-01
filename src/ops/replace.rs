@@ -53,7 +53,7 @@ fn render_var(mut template: String, var_name: &str, var_value: Option<&str>) -> 
     if let Some(var_value) = var_value {
         template = template.replace(var_name, var_value);
     } else if template.contains(var_name) {
-        log::warn!("Unrendered {} present in template {:?}", var_name, template);
+        log::warn!("Unrendered {var_name} present in template {template:?}");
     }
     template
 }

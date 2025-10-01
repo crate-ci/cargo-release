@@ -125,8 +125,8 @@ pub fn changes(
                     true
                 }
             })?;
-            let tag_id = tag_id
-                .ok_or_else(|| anyhow::format_err!("could not find tag {}", prior_tag_name))?;
+            let tag_id =
+                tag_id.ok_or_else(|| anyhow::format_err!("could not find tag {prior_tag_name}"))?;
 
             let head_id = repo.head()?.peel_to_commit()?.id();
 
@@ -263,8 +263,7 @@ pub fn changes(
             }
         } else {
             log::debug!(
-                "Cannot detect changes for {} because no tag was found. Try setting `--prev-tag-name <TAG>`.",
-                crate_name,
+                "Cannot detect changes for {crate_name} because no tag was found. Try setting `--prev-tag-name <TAG>`.",
             );
         }
     }

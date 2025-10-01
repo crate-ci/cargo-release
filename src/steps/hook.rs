@@ -200,7 +200,7 @@ pub fn hook(
             .into_iter()
             .map(|arg| template.render(arg))
             .collect::<Vec<_>>();
-        log::debug!("calling pre-release hook: {:?}", pre_rel_hook);
+        log::debug!("calling pre-release hook: {pre_rel_hook:?}");
         let envs = maplit::btreemap! {
             OsStr::new("PREV_VERSION") => prev_version_var.as_ref(),
             OsStr::new("PREV_METADATA") => prev_metadata_var.as_ref(),
