@@ -66,7 +66,7 @@ pub fn log(level: log::Level, message: impl std::fmt::Display) -> CargoResult<()
         log::Level::Warn => warn(message),
         log::Level::Info => note(message),
         _ => {
-            log::log!(level, "{}", message);
+            log::log!(level, "{message}");
             Ok(())
         }
     }

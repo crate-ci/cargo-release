@@ -30,14 +30,14 @@ pub fn is_behind_remote(dir: &Path, remote: &str, branch: &str) -> CargoResult<b
 
             let base_id = repo.merge_base(remote_branch_id, branch_id)?;
 
-            log::trace!("{}: {}", remote_branch, remote_branch_id);
-            log::trace!("merge base: {}", base_id);
+            log::trace!("{remote_branch}: {remote_branch_id}");
+            log::trace!("merge base: {base_id}");
 
             base_id != remote_branch_id
         }
         Err(err) => {
             let _ = crate::ops::shell::warn(format!("push target `{remote_branch}` doesn't exist"));
-            log::trace!("error {}", err);
+            log::trace!("error {err}");
             false
         }
     };
@@ -57,14 +57,14 @@ pub fn is_local_unchanged(dir: &Path, remote: &str, branch: &str) -> CargoResult
 
             let base_id = repo.merge_base(remote_branch_id, branch_id)?;
 
-            log::trace!("{}: {}", remote_branch, remote_branch_id);
-            log::trace!("merge base: {}", base_id);
+            log::trace!("{remote_branch}: {remote_branch_id}");
+            log::trace!("merge base: {base_id}");
 
             base_id == branch_id
         }
         Err(err) => {
             let _ = crate::ops::shell::warn(format!("push target `{remote_branch}` doesn't exist"));
-            log::trace!("error {}", err);
+            log::trace!("error {err}");
             false
         }
     };

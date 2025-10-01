@@ -169,7 +169,7 @@ impl PackageRelease {
                     git::find_last_tag(&package_root, &tag_glob)
                 }
                 Err(err) => {
-                    log::debug!("failed to find tag with glob `{}`: {}", tag_glob, err);
+                    log::debug!("failed to find tag with glob `{tag_glob}`: {err}");
                     None
                 }
             }

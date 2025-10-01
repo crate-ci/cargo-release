@@ -50,17 +50,17 @@ pub fn verify_tags_missing(
     let mut tag_exists = false;
     let mut seen_tags = std::collections::HashSet::new();
     for pkg in pkgs {
-        if let Some(tag_name) = pkg.planned_tag.as_ref() {
-            if seen_tags.insert(tag_name) {
-                let cwd = &pkg.package_root;
-                if crate::ops::git::tag_exists(cwd, tag_name)? {
-                    let crate_name = pkg.meta.name.as_str();
-                    let _ = crate::ops::shell::log(
-                        level,
-                        format!("tag `{tag_name}` already exists (for `{crate_name}`)"),
-                    );
-                    tag_exists = true;
-                }
+        if let Some(tag_name) = pkg.planned_tag.as_ref()
+            && seen_tags.insert(tag_name)
+        {
+            let cwd = &pkg.package_root;
+            if crate::ops::git::tag_exists(cwd, tag_name)? {
+                let crate_name = pkg.meta.name.as_str();
+                let _ = crate::ops::shell::log(
+                    level,
+                    format!("tag `{tag_name}` already exists (for `{crate_name}`)"),
+                );
+                tag_exists = true;
             }
         }
     }
@@ -84,17 +84,17 @@ pub fn verify_tags_exist(
     let mut tag_missing = false;
     let mut seen_tags = std::collections::HashSet::new();
     for pkg in pkgs {
-        if let Some(tag_name) = pkg.planned_tag.as_ref() {
-            if seen_tags.insert(tag_name) {
-                let cwd = &pkg.package_root;
-                if !crate::ops::git::tag_exists(cwd, tag_name)? {
-                    let crate_name = pkg.meta.name.as_str();
-                    let _ = crate::ops::shell::log(
-                        level,
-                        format!("tag `{tag_name}` doesn't exist (for `{crate_name}`)"),
-                    );
-                    tag_missing = true;
-                }
+        if let Some(tag_name) = pkg.planned_tag.as_ref()
+            && seen_tags.insert(tag_name)
+        {
+            let cwd = &pkg.package_root;
+            if !crate::ops::git::tag_exists(cwd, tag_name)? {
+                let crate_name = pkg.meta.name.as_str();
+                let _ = crate::ops::shell::log(
+                    level,
+                    format!("tag `{tag_name}` doesn't exist (for `{crate_name}`)"),
+                );
+                tag_missing = true;
             }
         }
     }
@@ -136,7 +136,7 @@ pub fn verify_git_branch(
                 "cannot release from branch `{branch}` as it doesn't match {allowed}; either switch to an allowed branch or add this branch to `allow-branch`",
             ),
         );
-        log::trace!("due to {:?}", good_branch_match);
+        log::trace!("due to {good_branch_match:?}");
         if level == log::Level::Error {
             success = false;
             if !dry_run {
@@ -186,18 +186,18 @@ pub fn verify_monotonically_increasing(
 
     let mut downgrades_present = false;
     for pkg in pkgs {
-        if let Some(version) = pkg.planned_version.as_ref() {
-            if version.full_version < pkg.initial_version.full_version {
-                let crate_name = pkg.meta.name.as_str();
-                let _ = crate::ops::shell::log(
-                    level,
-                    format!(
-                        "cannot downgrade {} from {} to {}",
-                        crate_name, version.full_version, pkg.initial_version.full_version
-                    ),
-                );
-                downgrades_present = true;
-            }
+        if let Some(version) = pkg.planned_version.as_ref()
+            && version.full_version < pkg.initial_version.full_version
+        {
+            let crate_name = pkg.meta.name.as_str();
+            let _ = crate::ops::shell::log(
+                level,
+                format!(
+                    "cannot downgrade {} from {} to {}",
+                    crate_name, version.full_version, pkg.initial_version.full_version
+                ),
+            );
+            downgrades_present = true;
         }
     }
     if downgrades_present && level == log::Level::Error {
@@ -346,10 +346,7 @@ pub fn warn_changed(
             if let Some(changed) = version::changed_since(ws_meta, pkg, prior_tag_name) {
                 if !changed.is_empty() {
                     log::debug!(
-                        "Files changed in {} since {}: {:#?}",
-                        crate_name,
-                        prior_tag_name,
-                        changed
+                        "Files changed in {crate_name} since {prior_tag_name}: {changed:#?}"
                     );
                     changed_pkgs.insert(&pkg.meta.id);
                     if changed.len() == 1 && changed[0].ends_with("Cargo.lock") {
@@ -358,11 +355,7 @@ pub fn warn_changed(
                         changed_pkgs.extend(pkg.dependents.iter().map(|d| &d.pkg.id));
                     }
                 } else if changed_pkgs.contains(&pkg.meta.id) {
-                    log::debug!(
-                        "Dependency changed for {} since {}",
-                        crate_name,
-                        prior_tag_name,
-                    );
+                    log::debug!("Dependency changed for {crate_name} since {prior_tag_name}",);
                     changed_pkgs.insert(&pkg.meta.id);
                     changed_pkgs.extend(pkg.dependents.iter().map(|d| &d.pkg.id));
                 } else {
@@ -373,15 +366,12 @@ pub fn warn_changed(
                 }
             } else {
                 log::debug!(
-                    "cannot detect changes for {} because tag {} is missing. Try setting `--prev-tag-name <TAG>`.",
-                    crate_name,
-                    prior_tag_name
+                    "cannot detect changes for {crate_name} because tag {prior_tag_name} is missing. Try setting `--prev-tag-name <TAG>`."
                 );
             }
         } else {
             log::debug!(
-                "cannot detect changes for {} because no tag was found. Try setting `--prev-tag-name <TAG>`.",
-                crate_name,
+                "cannot detect changes for {crate_name} because no tag was found. Try setting `--prev-tag-name <TAG>`.",
             );
         }
     }

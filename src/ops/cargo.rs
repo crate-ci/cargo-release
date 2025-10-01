@@ -200,10 +200,10 @@ pub fn ensure_owners(
     // HACK: No programmatic CLI access and don't want to link against `cargo` (yet), so parsing
     // text output
     for line in raw.lines() {
-        if let Some((owner, _)) = line.split_once(' ') {
-            if !owner.is_empty() {
-                current.insert(owner);
-            }
+        if let Some((owner, _)) = line.split_once(' ')
+            && !owner.is_empty()
+        {
+            current.insert(owner);
         }
     }
 
@@ -378,18 +378,18 @@ fn upgrade_req(
     let version_value = if let Some(version_value) = dep_item.get_mut("version") {
         version_value
     } else {
-        log::debug!("not updating path-only dependency on {}", name);
+        log::debug!("not updating path-only dependency on {name}");
         return false;
     };
 
     let existing_req_str = if let Some(existing_req) = version_value.as_str() {
         existing_req
     } else {
-        log::debug!("unsupported dependency {}", name);
+        log::debug!("unsupported dependency {name}");
         return false;
     };
     let Ok(existing_req) = semver::VersionReq::parse(existing_req_str) else {
-        log::debug!("unsupported dependency req {}={}", name, existing_req_str);
+        log::debug!("unsupported dependency req {name}={existing_req_str}");
         return false;
     };
     let new_req = match upgrade {
