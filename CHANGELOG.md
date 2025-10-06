@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [0.25.20] - 2025-10-06
+
 ### Fixes
 
 - Include registry name in "already published" error
@@ -789,7 +791,8 @@ git.
 * Doc update
 
 <!-- next-url -->
-[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v0.25.19...HEAD
+[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v0.25.20...HEAD
+[0.25.20]: https://github.com/crate-ci/cargo-release/compare/v0.25.19...v0.25.20
 [0.25.19]: https://github.com/crate-ci/cargo-release/compare/v0.25.18...v0.25.19
 [0.25.18]: https://github.com/crate-ci/cargo-release/compare/v0.25.17...v0.25.18
 [0.25.17]: https://github.com/crate-ci/cargo-release/compare/v0.25.16...v0.25.17
