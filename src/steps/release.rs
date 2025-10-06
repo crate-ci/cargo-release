@@ -218,9 +218,10 @@ impl ReleaseStep {
                 &version.full_version_string,
                 pkg.config.certs_source(),
             ) {
+                let registry = pkg.config.registry().unwrap_or("crates.io");
                 let _ = crate::ops::shell::error(format!(
-                    "{} {} is already published",
-                    crate_name, version.full_version_string
+                    "{} {} is already published to {}",
+                    crate_name, version.full_version_string, registry
                 ));
                 double_publish = true;
             }
