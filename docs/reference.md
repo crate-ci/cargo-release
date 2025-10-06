@@ -100,7 +100,10 @@ Package configuration is read from the following (in precedence order)
 - `$CRATE/release.toml`
 - `$WORKSPACE/Cargo.toml` (`[workspace.metadata.release]` table)
 - `$WORKSPACE/release.toml`
-- `$HOME/.config/cargo-release/release.toml`
+- *platform dependent*
+  - linux: `$HOME/.config/cargo-release/release.toml`
+  - windows: `%FOLDERID_RoamingAppData%/cargo-release/release.toml`
+  - mac: `$HOME/Library/Application Support/cargo-release/release.toml`
 - `$HOME/.release.toml`
 
 Workspace configuration is read from the following (in precedence order)
