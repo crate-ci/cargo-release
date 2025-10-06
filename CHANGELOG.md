@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Fixes
+
+- Include registry name in "already published" error
+
 ## [0.25.19] - 2025-09-26
 
 ### Fixes
