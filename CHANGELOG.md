@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Internal
 
-- Depednency updates
+- Dependency updates
 
 ## [0.25.17] - 2025-02-05
 
