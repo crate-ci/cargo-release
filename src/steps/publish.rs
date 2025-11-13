@@ -222,19 +222,6 @@ fn workspace_publish(
         return Err(101.into());
     }
 
-    // HACK: This is a fallback in case users can't or don't want to rely on cargo waiting for
-    // them
-    if !dry_run {
-        if let Some(publish_grace_sleep) = publish_grace_sleep() {
-            log::debug!(
-                "waiting an additional {} seconds for {} to update its indices...",
-                publish_grace_sleep,
-                registry.unwrap_or("crates.io")
-            );
-            std::thread::sleep(std::time::Duration::from_secs(publish_grace_sleep));
-        }
-    }
-
     Ok(())
 }
 
