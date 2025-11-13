@@ -270,15 +270,13 @@ fn serial_publish(
 
         // HACK: This is a fallback in case users can't or don't want to rely on cargo waiting for
         // them
-        if !dry_run {
-            if let Some(publish_grace_sleep) = publish_grace_sleep {
-                log::debug!(
-                    "waiting an additional {} seconds for {} to update its indices...",
-                    publish_grace_sleep,
-                    pkg.config.registry().unwrap_or("crates.io")
-                );
-                std::thread::sleep(std::time::Duration::from_secs(publish_grace_sleep));
-            }
+        if !dry_run && let Some(publish_grace_sleep) = publish_grace_sleep {
+            log::debug!(
+                "waiting an additional {} seconds for {} to update its indices...",
+                publish_grace_sleep,
+                pkg.config.registry().unwrap_or("crates.io")
+            );
+            std::thread::sleep(std::time::Duration::from_secs(publish_grace_sleep));
         }
     }
 
