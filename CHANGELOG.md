@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [0.25.22] - 2025-11-13
+
 ### Fixes
 
 - Don't require nightly for the stabilized Cargo-native workspace publishing
@@ -805,7 +807,8 @@ git.
 * Doc update
 
 <!-- next-url -->
-[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v0.25.21...HEAD
+[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v0.25.22...HEAD
+[0.25.22]: https://github.com/crate-ci/cargo-release/compare/v0.25.21...v0.25.22
 [0.25.21]: https://github.com/crate-ci/cargo-release/compare/v0.25.20...v0.25.21
 [0.25.20]: https://github.com/crate-ci/cargo-release/compare/v0.25.19...v0.25.20
 [0.25.19]: https://github.com/crate-ci/cargo-release/compare/v0.25.18...v0.25.19
