@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Compatibility
+
+- Build and runtime MSRV is now 1.90
+
+### Features
+
+- Stabilize Cargo-native workspace publishing
+
 ## [0.25.20] - 2025-10-06
 
 ### Fixes
