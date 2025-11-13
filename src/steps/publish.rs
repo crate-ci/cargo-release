@@ -225,11 +225,7 @@ fn workspace_publish(
     // HACK: This is a fallback in case users can't or don't want to rely on cargo waiting for
     // them
     if !dry_run {
-        let publish_grace_sleep = std::env::var("PUBLISH_GRACE_SLEEP")
-            .unwrap_or_else(|_| Default::default())
-            .parse()
-            .unwrap_or(0);
-        if 0 < publish_grace_sleep {
+        if let Some(publish_grace_sleep) = publish_grace_sleep() {
             log::debug!(
                 "waiting an additional {} seconds for {} to update its indices...",
                 publish_grace_sleep,
@@ -282,11 +278,7 @@ fn serial_publish(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), Cl
         // HACK: This is a fallback in case users can't or don't want to rely on cargo waiting for
         // them
         if !dry_run {
-            let publish_grace_sleep = std::env::var("PUBLISH_GRACE_SLEEP")
-                .unwrap_or_else(|_| Default::default())
-                .parse()
-                .unwrap_or(0);
-            if 0 < publish_grace_sleep {
+            if let Some(publish_grace_sleep) = publish_grace_sleep() {
                 log::debug!(
                     "waiting an additional {} seconds for {} to update its indices...",
                     publish_grace_sleep,
@@ -298,4 +290,16 @@ fn serial_publish(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), Cl
     }
 
     Ok(())
+}
+
+fn publish_grace_sleep() -> Option<u64> {
+    let publish_grace_sleep = std::env::var("PUBLISH_GRACE_SLEEP")
+        .unwrap_or_else(|_| Default::default())
+        .parse()
+        .unwrap_or(0);
+    if publish_grace_sleep == 0 {
+        None
+    } else {
+        Some(publish_grace_sleep)
+    }
 }
