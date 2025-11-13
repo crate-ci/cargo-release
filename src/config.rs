@@ -340,7 +340,7 @@ impl Unstable {
         }
     }
 
-    pub fn workspace_publish(&self) -> bool {
+    fn workspace_publish(&self) -> bool {
         self.workspace_publish.unwrap_or(false)
     }
 }
