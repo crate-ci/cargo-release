@@ -72,9 +72,6 @@ pub fn publish(
         manifest_path.to_str().unwrap(),
     ];
 
-    if 1 < pkgids.len() {
-        command.push("-Zpackage-workspace");
-    }
     for pkgid in pkgids {
         command.push("--package");
         command.push(pkgid);
