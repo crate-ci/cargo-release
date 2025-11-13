@@ -177,9 +177,10 @@ pub fn publish(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliEr
         let registry = first_pkg.config.registry();
         let target = first_pkg.config.target.as_deref();
         let publish_grace_sleep = publish_grace_sleep();
-        if pkgs
-            .iter()
-            .all(|p| p.config.registry() == registry && p.config.target.as_deref() == target)
+        if publish_grace_sleep.is_none()
+            && pkgs
+                .iter()
+                .all(|p| p.config.registry() == registry && p.config.target.as_deref() == target)
         {
             let manifest_path = &first_pkg.manifest_path;
             workspace_publish(manifest_path, pkgs, registry, target, dry_run)
