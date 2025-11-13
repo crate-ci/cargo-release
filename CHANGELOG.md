@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [0.25.21] - 2025-11-13
+
 ### Compatibility
 
 - Build and runtime MSRV is now 1.90
@@ -799,7 +801,8 @@ git.
 * Doc update
 
 <!-- next-url -->
-[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v0.25.20...HEAD
+[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v0.25.21...HEAD
+[0.25.21]: https://github.com/crate-ci/cargo-release/compare/v0.25.20...v0.25.21
 [0.25.20]: https://github.com/crate-ci/cargo-release/compare/v0.25.19...v0.25.20
 [0.25.19]: https://github.com/crate-ci/cargo-release/compare/v0.25.18...v0.25.19
 [0.25.18]: https://github.com/crate-ci/cargo-release/compare/v0.25.17...v0.25.18
