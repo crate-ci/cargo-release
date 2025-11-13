@@ -176,6 +176,7 @@ pub fn publish(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliEr
         let first_pkg = pkgs.first().unwrap();
         let registry = first_pkg.config.registry();
         let target = first_pkg.config.target.as_deref();
+        let publish_grace_sleep = publish_grace_sleep();
         if pkgs
             .iter()
             .all(|p| p.config.registry() == registry && p.config.target.as_deref() == target)
@@ -183,7 +184,7 @@ pub fn publish(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliEr
             let manifest_path = &first_pkg.manifest_path;
             workspace_publish(manifest_path, pkgs, registry, target, dry_run)
         } else {
-            serial_publish(pkgs, dry_run)
+            serial_publish(pkgs, publish_grace_sleep, dry_run)
         }
     }
 }
@@ -225,7 +226,11 @@ fn workspace_publish(
     Ok(())
 }
 
-fn serial_publish(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliError> {
+fn serial_publish(
+    pkgs: &[plan::PackageRelease],
+    publish_grace_sleep: Option<u64>,
+    dry_run: bool,
+) -> Result<(), CliError> {
     for pkg in pkgs {
         if !pkg.config.publish() {
             continue;
@@ -265,7 +270,7 @@ fn serial_publish(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), Cl
         // HACK: This is a fallback in case users can't or don't want to rely on cargo waiting for
         // them
         if !dry_run {
-            if let Some(publish_grace_sleep) = publish_grace_sleep() {
+            if let Some(publish_grace_sleep) = publish_grace_sleep {
                 log::debug!(
                     "waiting an additional {} seconds for {} to update its indices...",
                     publish_grace_sleep,
