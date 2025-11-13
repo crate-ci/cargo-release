@@ -319,7 +319,7 @@ impl ReleaseStep {
         }
 
         // STEP 3: cargo publish
-        super::publish::publish(&selected_pkgs, dry_run, &ws_config.unstable)?;
+        super::publish::publish(&selected_pkgs, dry_run)?;
         super::owner::ensure_owners(&selected_pkgs, dry_run)?;
 
         // STEP 5: Tag

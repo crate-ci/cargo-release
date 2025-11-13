@@ -152,7 +152,7 @@ impl PublishStep {
         super::confirm("Publish", &selected_pkgs, self.no_confirm, dry_run)?;
 
         // STEP 3: cargo publish
-        publish(&selected_pkgs, dry_run, &ws_config.unstable)?;
+        publish(&selected_pkgs, dry_run)?;
 
         super::finish(failed, dry_run)
     }
@@ -169,14 +169,10 @@ impl PublishStep {
     }
 }
 
-pub fn publish(
-    pkgs: &[plan::PackageRelease],
-    dry_run: bool,
-    unstable: &crate::config::Unstable,
-) -> Result<(), CliError> {
+pub fn publish(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliError> {
     if pkgs.is_empty() {
         Ok(())
-    } else if unstable.workspace_publish() {
+    } else {
         let first_pkg = pkgs.first().unwrap();
         let registry = first_pkg.config.registry();
         let target = first_pkg.config.target.as_deref();
@@ -189,8 +185,6 @@ pub fn publish(
         } else {
             serial_publish(pkgs, dry_run)
         }
-    } else {
-        serial_publish(pkgs, dry_run)
     }
 }
 
