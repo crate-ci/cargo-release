@@ -124,15 +124,14 @@ impl CommitStep {
     }
 }
 
-pub fn pkg_commit(pkg: &plan::PackageRelease, dry_run: bool) -> Result<(), CliError> {
-    let cwd = &pkg.package_root;
+fn pkg_template(pkg: &plan::PackageRelease) -> Template<'_> {
     let crate_name = pkg.meta.name.as_str();
     let version = pkg.planned_version.as_ref().unwrap_or(&pkg.initial_version);
     let prev_version_var = pkg.initial_version.bare_version_string.as_str();
     let prev_metadata_var = pkg.initial_version.full_version.build.as_str();
     let version_var = version.bare_version_string.as_str();
     let metadata_var = version.full_version.build.as_str();
-    let template = Template {
+    Template {
         prev_version: Some(prev_version_var),
         prev_metadata: Some(prev_metadata_var),
         version: Some(version_var),
@@ -140,7 +139,12 @@ pub fn pkg_commit(pkg: &plan::PackageRelease, dry_run: bool) -> Result<(), CliEr
         crate_name: Some(crate_name),
         date: Some(NOW.as_str()),
         ..Default::default()
-    };
+    }
+}
+
+pub fn pkg_commit(pkg: &plan::PackageRelease, dry_run: bool) -> Result<(), CliError> {
+    let cwd = &pkg.package_root;
+    let template = pkg_template(pkg);
     let commit_msg = template.render(pkg.config.pre_release_commit_message());
     let sign = pkg.config.sign_commit();
     if !git::commit_all(cwd, &commit_msg, sign, dry_run)? {
@@ -158,22 +162,23 @@ pub fn workspace_commit(
     dry_run: bool,
 ) -> Result<(), CliError> {
     let shared_version = super::find_shared_versions(pkgs)?;
-
-    let shared_commit_msg = {
+    let template = if pkgs.len() == 1 {
+        pkg_template(&pkgs[0])
+    } else {
         let version_var = shared_version
             .as_ref()
             .map(|v| v.bare_version_string.as_str());
         let metadata_var = shared_version
             .as_ref()
             .map(|v| v.full_version.build.as_str());
-        let template = Template {
+        Template {
             version: version_var,
             metadata: metadata_var,
             date: Some(NOW.as_str()),
             ..Default::default()
-        };
-        template.render(ws_config.pre_release_commit_message())
+        }
     };
+    let shared_commit_msg = template.render(ws_config.pre_release_commit_message());
     if !git::commit_all(
         ws_meta.workspace_root.as_std_path(),
         &shared_commit_msg,

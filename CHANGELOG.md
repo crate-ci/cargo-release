@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Features
+
+- Enable variable expansion (`{{crate_name}}`, etc) for single-crate workspace releases
+
 ## [0.25.22] - 2025-11-13
 
 ### Fixes
