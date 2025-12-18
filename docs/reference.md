@@ -150,7 +150,7 @@ certs-source = "webpki"
 
 ### Configuration keys
 
-Note: fields are from the [package-configuration](#sources) unless otherwise specified.
+Note: fields are [package-configuration](#sources) unless otherwise specified,
 
 ### `allow-branch`
 
