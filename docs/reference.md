@@ -240,6 +240,8 @@ Commit settings will be read from the workspace-config.
 
 A commit message template for release.
 
+See also [Placeholders(#placeholders)
+
 ### `tag`
 
 - Type: bool
@@ -255,12 +257,16 @@ Create git tag for the version
 
 A message template for an annotated tag (set to blank for lightweight tags). The placeholder `{{tag_name}}` and `{{prefix}}` (the tag prefix) is supported in addition to the global placeholders mentioned below.
 
+See also [Placeholders(#placeholders)
+
 ### `tag-prefix`
 
 - Type: string
 - CLI: `--tag-prefix`
 
 Prefix of git tag, note that this will override default prefix based on crate name.
+
+See also [Placeholders(#placeholders)
 
 ### `tag-name`
 
@@ -271,6 +277,8 @@ Prefix of git tag, note that this will override default prefix based on crate na
 The name of the git tag.
 The placeholder `{{prefix}}` (the tag prefix) is supported in addition to the global placeholders mentioned below.
 
+See also [Placeholders(#placeholders)
+
 ### `pre-release-replacements`
 
 - Type: array of tables (see below)
@@ -278,11 +286,38 @@ The placeholder `{{prefix}}` (the tag prefix) is supported in addition to the gl
 
 Specify files that cargo-release will search and replace with new version for the release commit
 
+This field is an array of tables with the following
+
+* `file`: the file to search and replace
+* `search`: [regex](https://docs.rs/regex/latest/regex/) that matches string you want to replace
+* `replace`: the replacement string; you can use the any of the placeholders
+  mentioned below. Regex patterns, such as `$1`, are also valid for referring to
+  captured groups.
+* `min` (default is `1`): Minimum occurrences of `search`.
+* `max` (optional): Maximum occurrences of `search`.
+* `exactly` (optional): Number of occurrences of `search`.
+* `prerelease` (default is `false`): Run the replacement when bumping to a pre-release level.
+
+See [Cargo.toml](https://github.com/crate-ci/cargo-release/blob/master/Cargo.toml) for example.
+
 ### `pre-release-hook`
 
 - Type: list of arguments
 
 Provide a command to run before `cargo-release` commits version change. If the return code of hook command is greater than 0, the release process will be aborted.
+
+The following environment variables are made available to `pre-release-hook`:
+
+* `PREV_VERSION`: The version before `cargo-release` was executed (before any version bump).
+* `PREV_METADATA`: The version's metadata field before `cargo-release` was executed (before any version bump).
+* `NEW_VERSION`: The current (bumped) crate version.
+* `NEW_METADATA`: The current (bumped) crate version's metadata field.
+* `DRY_RUN`: Whether the release is actually happening (`true` / `false`)
+* `CRATE_NAME`: The name of the crate.
+* `WORKSPACE_ROOT`: The path to the workspace.
+* `CRATE_ROOT`: The path to the crate.
+
+See also [Placeholders(#placeholders)
 
 ### `publish`
 
@@ -366,26 +401,6 @@ Rate limit for publishing existing packages
 
 Policy for using Mozilla's standard certificate root of trust (`webpki`) or using the system certificate root of trust (`native`)
 
-### Supported Environment Variables
-
-* `PUBLISH_GRACE_SLEEP`: sleep timeout between crates publish when releasing from workspace. This is a workaround to make previous crate discoverable on crates.io.
-
-### Pre-release Replacements
-
-This field is an array of tables with the following
-
-* `file`: the file to search and replace
-* `search`: [regex](https://docs.rs/regex/latest/regex/) that matches string you want to replace
-* `replace`: the replacement string; you can use the any of the placeholders
-  mentioned below. Regex patterns, such as `$1`, are also valid for referring to
-  captured groups.
-* `min` (default is `1`): Minimum occurrences of `search`.
-* `max` (optional): Maximum occurrences of `search`.
-* `exactly` (optional): Number of occurrences of `search`.
-* `prerelease` (default is `false`): Run the replacement when bumping to a pre-release level.
-
-See [Cargo.toml](https://github.com/crate-ci/cargo-release/blob/master/Cargo.toml) for example.
-
 ### Placeholders
 
 The following fields support placeholders for information about your release:
@@ -408,15 +423,6 @@ The following placeholders are supported:
 * `{{prefix}}` (only valid for `tag-name` / `tag-message`): The value prepended to the tag name.
 * `{{tag_name}}` (only valid for `tag-message`): The name of the git tag.
 
-### Hook Environment Variables.
+## Environment variables
 
-The following environment variables are made available to `pre-release-hook`:
-
-* `PREV_VERSION`: The version before `cargo-release` was executed (before any version bump).
-* `PREV_METADATA`: The version's metadata field before `cargo-release` was executed (before any version bump).
-* `NEW_VERSION`: The current (bumped) crate version.
-* `NEW_METADATA`: The current (bumped) crate version's metadata field.
-* `DRY_RUN`: Whether the release is actually happening (`true` / `false`)
-* `CRATE_NAME`: The name of the crate.
-* `WORKSPACE_ROOT`: The path to the workspace.
-* `CRATE_ROOT`: The path to the crate.
+* `PUBLISH_GRACE_SLEEP`: sleep timeout between crates publish when releasing from workspace. This is a workaround to make previous crate discoverable on crates.io.
