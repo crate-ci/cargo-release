@@ -106,6 +106,9 @@ Package configuration is read from the following (in precedence order)
   - mac: `$HOME/Library/Application Support/cargo-release/release.toml`
 - `$HOME/.release.toml`
 
+**Note:** workspace inheritance is implicit, unlike Cargo's workspace inheritance.
+See also [FAQ: How do I apply a setting only to one crate in my workspace?](faq.md#how-do-i-apply-a-setting-only-to-one-crate-in-my-workspace)
+
 Workspace configuration is read from the following (in precedence order)
 - Command line arguments
 - File specified via `--config PATH`
@@ -280,7 +283,9 @@ See also [Placeholders(#placeholders)
 The name of the git tag.
 The placeholder `{{prefix}}` (the tag prefix) is supported in addition to the global placeholders mentioned below.
 
-See also [Placeholders(#placeholders)
+See also
+- [Placeholders(#placeholders)
+- [How do I customize my tagging in a workspace?](faq.md#how-do-i-customize-my-tagging-in-a-workspace)
 
 ### `pre-release-replacements`
 
@@ -303,6 +308,10 @@ This field is an array of tables with the following
 
 See [Cargo.toml](https://github.com/crate-ci/cargo-release/blob/master/Cargo.toml) for example.
 
+See also
+- [FAQ: How do I update my README or other files](faq.md#how-do-i-update-my-readme-or-other-files)
+- [FAQ: Maintaining Changelog](faq.md#maintaining-changelog)
+
 ### `pre-release-hook`
 
 - Type: list of arguments
@@ -320,7 +329,9 @@ The following environment variables are made available to `pre-release-hook`:
 * `WORKSPACE_ROOT`: The path to the workspace.
 * `CRATE_ROOT`: The path to the crate.
 
-See also [Placeholders(#placeholders)
+See also
+- [Placeholders](#placeholders)
+- [FAQ: Maintaining Changelog](faq.md#maintaining-changelog)
 
 ### `publish`
 
