@@ -89,18 +89,23 @@ current release version and date.
 Example problems:
 - Release fails because `cargo-release` was trying to update a non-existent `CHANGELOG.md` ([#157](https://github.com/crate-ci/cargo-release/issues/157))
 - Only create one tag for the entire workspace ([#162](https://github.com/crate-ci/cargo-release/issues/162))
+- Hooks are run multiple times, rather than once ([#925](https://github.com/crate-ci/cargo-release/issues/925))
 
-Somethings only need to be done on for a release, like updating the
-`CHANGELOG.md`, no matter how many crates are being released.  Usually these
-operations are tied to a specific crate.  This is straightforward when you do
-not have a crate in your workspace root.
+Some things may only need to be done once for a release
+no matter how many crates are being released,
+like updating the `CHANGELOG.md`.
+It is important to know that `cargo release` operates on mostly packages.
+Unless specified otherwise,
+configuration on a workspace is for being inherited by packages,
+including hooks, replacements, and tagging.
 
-When you have a root crate, it shares its `release.toml` with the workspace,
-making it less obvious how to do root-crate-specific settings.   If you'd like
-to customize settings differently for the root crate vs the other crate's, you
-have two choices:
-- Put the common setting in the workspace's `release.toml` and override it for the root crate in `Cargo.toml`.
-- Modify each crate's `release.toml` with the setting relevant for that crate.
+We recommend picking a "representative" package and make it responsible for performing these operations
+by putting this once-per-release configuration in its
+[package-specific configuration](reference.md#sources).
+
+When you have a root crate in your workspace,
+`release.toml` is shared between the package and the workspace.
+Prefer `Cargo.toml`s `[package.metadata.release]` for package specific configuration to avoid this problem.
 
 ## How do I customize my tagging in a workspace?
 
