@@ -262,6 +262,9 @@ See also [Placeholders(#placeholders)
 ### `tag-prefix`
 
 - Type: string
+- Default:
+  - In repo root: `""`
+  - Otherwise: `"{{crate_name}}-"`
 - CLI: `--tag-prefix`
 
 Prefix of git tag, note that this will override default prefix based on crate name.
