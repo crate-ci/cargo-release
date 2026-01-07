@@ -212,7 +212,7 @@ pub fn verify_monotonically_increasing(
 
 pub fn verify_rate_limit(
     pkgs: &[plan::PackageRelease],
-    index: &mut crate::ops::index::CratesIoIndex,
+    index: &mut crate::ops::index::CratesIndex,
     rate_limit: &crate::config::RateLimit,
     dry_run: bool,
     level: log::Level,
@@ -228,7 +228,12 @@ pub fn verify_rate_limit(
         // Note: these rate limits are only known for default registry
         if pkg.config.registry().is_none() && pkg.config.publish() {
             let crate_name = pkg.meta.name.as_str();
-            if index.has_krate(None, crate_name, pkg.config.certs_source())? {
+            if index.has_krate(
+                &pkg.manifest_path,
+                None,
+                crate_name,
+                pkg.config.certs_source(),
+            )? {
                 existing += 1;
             } else {
                 new += 1;

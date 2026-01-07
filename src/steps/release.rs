@@ -46,7 +46,7 @@ pub struct ReleaseStep {
 impl ReleaseStep {
     pub fn run(&self) -> Result<(), CliError> {
         git::git_version()?;
-        let mut index = crate::ops::index::CratesIoIndex::new();
+        let mut index = crate::ops::index::CratesIndex::new();
 
         if self.dry_run {
             let _ =
@@ -74,6 +74,7 @@ impl ReleaseStep {
                 pkg.bump(level_or_version, self.metadata.as_deref())?;
             }
             if index.has_krate(
+                &pkg.manifest_path,
                 pkg.config.registry(),
                 &pkg.meta.name,
                 pkg.config.certs_source(),
@@ -110,6 +111,7 @@ impl ReleaseStep {
                 let version = &pkg.initial_version;
                 if !cargo::is_published(
                     &mut index,
+                    &pkg.manifest_path,
                     pkg.config.registry(),
                     crate_name,
                     &version.full_version_string,
@@ -158,12 +160,12 @@ impl ReleaseStep {
                 continue;
             };
 
-            // HACK: `index` only supports default registry
-            if pkg.config.publish() && pkg.config.registry().is_none() {
+            if pkg.config.publish() {
                 let version = pkg.planned_version.as_ref().unwrap_or(&pkg.initial_version);
                 let crate_name = pkg.meta.name.as_str();
                 if !cargo::is_published(
                     &mut index,
+                    &pkg.manifest_path,
                     pkg.config.registry(),
                     crate_name,
                     &version.full_version_string,
@@ -213,6 +215,7 @@ impl ReleaseStep {
             let crate_name = pkg.meta.name.as_str();
             if cargo::is_published(
                 &mut index,
+                &pkg.manifest_path,
                 pkg.config.registry(),
                 crate_name,
                 &version.full_version_string,

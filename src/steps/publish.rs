@@ -84,13 +84,14 @@ impl PublishStep {
 
         let mut pkgs = plan::plan(pkgs)?;
 
-        let mut index = crate::ops::index::CratesIoIndex::new();
+        let mut index = crate::ops::index::CratesIndex::new();
         for pkg in pkgs.values_mut() {
             if pkg.config.release() {
                 let crate_name = pkg.meta.name.as_str();
                 let version = pkg.planned_version.as_ref().unwrap_or(&pkg.initial_version);
                 if crate::ops::cargo::is_published(
                     &mut index,
+                    &pkg.manifest_path,
                     pkg.config.registry(),
                     crate_name,
                     &version.full_version_string,
