@@ -2,8 +2,10 @@
 
 ## CLI Arguments
 
+<!-- `$ echo '$ cargo release -h' && cargo run --quiet -- release -h` as console -->
+
 ```console
-$ cargo-release release -h
+$ cargo release -h
 Cargo subcommand for you to smooth your release process.
 
 Usage: cargo release [OPTIONS] [LEVEL|VERSION]
@@ -71,7 +73,6 @@ Tag:
 Push:
       --no-push             Do not run git push in the last step
       --push-remote <NAME>  Git remote to push
-
 ```
 
 ### Bump level
