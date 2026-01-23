@@ -1,7 +1,7 @@
-<svg width="740px" height="74px" xmlns="http://www.w3.org/2000/svg">
+<svg width="740px" height="110px" xmlns="http://www.w3.org/2000/svg">
   <style>
     .fg { fill: #AAAAAA }
-    .bg { background: #000000 }
+    .bg { fill: #000000 }
     .container {
       padding: 0 10px;
       line-height: 18px;
@@ -16,11 +16,15 @@
   <rect width="100%" height="100%" y="0" rx="4.5" class="bg" />
 
   <text xml:space="preserve" class="container fg">
-    <tspan x="10px" y="28px"><tspan>warning: push target `origin/master` doesn't exist</tspan>
+    <tspan x="10px" y="28px"><tspan>warning: uncommitted changes detected, please resolve before release:</tspan>
 </tspan>
-    <tspan x="10px" y="46px"><tspan>   Upgrading cargo-list-test-fixture from 0.0.0 to 2.0.0</tspan>
+    <tspan x="10px" y="46px"><tspan>  target/ (Status(WT_NEW))</tspan>
 </tspan>
-    <tspan x="10px" y="64px">
+    <tspan x="10px" y="64px"><tspan>warning: push target `origin/master` doesn't exist</tspan>
+</tspan>
+    <tspan x="10px" y="82px"><tspan>   Upgrading cargo-list-test-fixture from 0.0.0 to 2.0.0</tspan>
+</tspan>
+    <tspan x="10px" y="100px">
 </tspan>
   </text>
 
