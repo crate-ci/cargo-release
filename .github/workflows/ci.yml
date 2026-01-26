@@ -43,7 +43,7 @@ jobs:
       CARGO_PROFILE_DEV_DEBUG: line-tables-only
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
       with:
@@ -56,10 +56,13 @@ jobs:
       run: cargo hack test --each-feature --workspace
   msrv:
     name: "Check MSRV"
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+    runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
       with:
@@ -72,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
       with:
@@ -85,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
       with:
@@ -100,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
       with:
@@ -108,7 +111,7 @@ jobs:
         components: rustfmt
     - uses: Swatinem/rust-cache@v2
     - name: Check formatting
-      run: cargo fmt --all -- --check
+      run: cargo fmt --check
   clippy:
     name: clippy
     runs-on: ubuntu-latest
@@ -116,7 +119,7 @@ jobs:
       security-events: write # to upload sarif results
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
       with:
@@ -135,7 +138,7 @@ jobs:
         | sarif-fmt
       continue-on-error: true
     - name: Upload
-      uses: github/codeql-action/upload-sarif@v3
+      uses: github/codeql-action/upload-sarif@v4
       with:
         sarif_file: clippy-results.sarif
         wait-for-processing: true
@@ -146,7 +149,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
       with:
