@@ -168,6 +168,8 @@ anyhow = "1.0.100"
 git-conventional = "0.12.9"
 similar = "2.7"
 anstream = "0.6.20"
+cargo_utils = "0.1.75"
+secrecy = "0.10.3"
 
 [dev-dependencies]
 assert_fs = "1.1"

@@ -122,13 +122,14 @@ pub fn publish(
 }
 
 pub fn is_published(
-    index: &mut crate::ops::index::CratesIoIndex,
+    index: &mut crate::ops::index::CratesIndex,
+    manifest: &Path,
     registry: Option<&str>,
     name: &str,
     version: &str,
     certs_source: CertsSource,
 ) -> bool {
-    match index.has_krate_version(registry, name, version, certs_source) {
+    match index.has_krate_version(manifest, registry, name, version, certs_source) {
         Ok(has_krate_version) => has_krate_version.unwrap_or(false),
         Err(err) => {
             // For both http and git indices, this _might_ be an error that goes away in

@@ -1,82 +1,135 @@
 use crate::config::CertsSource;
+use cargo_utils::{registry_token, registry_url};
+use secrecy::{ExposeSecret, SecretString};
+use std::borrow::Cow;
+use std::collections::hash_map::Entry;
+use std::path::Path;
+use tame_index::IndexUrl;
 use tame_index::krate::IndexKrate;
 use tame_index::utils::flock::FileLock;
 
+/// Provides access to the remote registries (crates.io and custom ones)
 #[derive(Default)]
-pub struct CratesIoIndex {
-    index: Option<RemoteIndex>,
-    cache: std::collections::HashMap<String, Option<IndexKrate>>,
+pub struct CratesIndex {
+    registries: std::collections::HashMap<Option<String>, RegistryIndex>,
 }
 
-impl CratesIoIndex {
+impl CratesIndex {
     #[inline]
     pub fn new() -> Self {
         Self {
-            index: None,
-            cache: std::collections::HashMap::new(),
+            registries: std::collections::HashMap::new(),
         }
     }
 
-    /// Determines if the specified crate exists in the crates.io index
+    fn resolve_registry(
+        &mut self,
+        manifest: &Path,
+        registry: Option<&str>,
+        certs_source: CertsSource,
+    ) -> Result<&mut RegistryIndex, crate::error::CliError> {
+        let registry_owned = registry.map(String::from);
+        let entry = self.registries.entry(registry_owned);
+        match entry {
+            Entry::Occupied(registry) => Ok(registry.into_mut()),
+            Entry::Vacant(entry) => {
+                let (index_url, token) = if let Some(registry) = registry {
+                    let url = registry_url(manifest, Some(registry))?.to_string();
+                    let token = registry_token(Some(registry))?;
+                    (IndexUrl::NonCratesIo(Cow::Owned(url)), token)
+                } else {
+                    (IndexUrl::CratesIoSparse, None)
+                };
+
+                let index = RegistryIndex::new(
+                    registry.unwrap_or("crates-io").to_string(),
+                    RemoteIndex::open(index_url, certs_source, token)?,
+                );
+                Ok(entry.insert(index))
+            }
+        }
+    }
+
+    /// Determines if the specified crate exists in the given registry
     #[inline]
     pub fn has_krate(
         &mut self,
+        manifest: &Path,
         registry: Option<&str>,
         name: &str,
         certs_source: CertsSource,
     ) -> Result<bool, crate::error::CliError> {
-        Ok(self
-            .krate(registry, name, certs_source)?
-            .map(|_| true)
-            .unwrap_or(false))
+        self.resolve_registry(manifest, registry, certs_source)?
+            .has_krate(name)
+    }
+
+    /// Determines if the specified crate version exists in the given registry
+    #[inline]
+    pub fn has_krate_version(
+        &mut self,
+        manifest: &Path,
+        registry: Option<&str>,
+        name: &str,
+        version: &str,
+        certs_source: CertsSource,
+    ) -> Result<Option<bool>, crate::error::CliError> {
+        self.resolve_registry(manifest, registry, certs_source)?
+            .has_krate_version(name, version)
+    }
+}
+
+/// Provides access to a single remote registry (crates.io or custom)
+pub struct RegistryIndex {
+    registry_name: String,
+    index: RemoteIndex,
+    cache: std::collections::HashMap<String, Option<IndexKrate>>,
+}
+
+impl RegistryIndex {
+    #[inline]
+    pub fn new(registry_name: String, index: RemoteIndex) -> Self {
+        Self {
+            registry_name,
+            index,
+            cache: std::collections::HashMap::new(),
+        }
+    }
+
+    /// Determines if the specified crate exists in this index
+    #[inline]
+    pub fn has_krate(&mut self, name: &str) -> Result<bool, crate::error::CliError> {
+        Ok(self.krate(name)?.map(|_| true).unwrap_or(false))
     }
 
     /// Determines if the specified crate version exists in the crates.io index
     #[inline]
     pub fn has_krate_version(
         &mut self,
-        registry: Option<&str>,
         name: &str,
         version: &str,
-        certs_source: CertsSource,
     ) -> Result<Option<bool>, crate::error::CliError> {
-        let krate = self.krate(registry, name, certs_source)?;
+        let krate = self.krate(name)?;
         Ok(krate.map(|ik| ik.versions.iter().any(|iv| iv.version == version)))
-    }
-
-    #[inline]
-    pub fn update_krate(&mut self, registry: Option<&str>, name: &str) {
-        if registry.is_some() {
-            return;
-        }
-
-        self.cache.remove(name);
     }
 
     pub(crate) fn krate(
         &mut self,
-        registry: Option<&str>,
-        name: &str,
-        certs_source: CertsSource,
+        krate_name: &str,
     ) -> Result<Option<IndexKrate>, crate::error::CliError> {
-        if let Some(registry) = registry {
-            log::trace!("Cannot connect to registry `{registry}`");
-            return Ok(None);
-        }
-
-        if let Some(entry) = self.cache.get(name) {
-            log::trace!("Reusing index for {name}");
+        if let Some(entry) = self.cache.get(krate_name) {
+            log::trace!(
+                "Reusing index for {krate_name} from registry {}",
+                self.registry_name
+            );
             return Ok(entry.clone());
         }
 
-        if self.index.is_none() {
-            log::trace!("Connecting to index");
-            self.index = Some(RemoteIndex::open(certs_source)?);
-        }
-        let index = self.index.as_mut().unwrap();
-        log::trace!("Downloading index for {name}");
-        let entry = index.krate(name)?;
-        self.cache.insert(name.to_owned(), entry.clone());
+        log::trace!(
+            "Downloading index for {krate_name} from registry {}",
+            self.registry_name
+        );
+        let entry = self.index.krate(krate_name)?;
+        self.cache.insert(krate_name.to_owned(), entry.clone());
         Ok(entry)
     }
 }
@@ -90,17 +143,35 @@ pub struct RemoteIndex {
 
 impl RemoteIndex {
     #[inline]
-    pub fn open(certs_source: CertsSource) -> Result<Self, crate::error::CliError> {
-        let index = tame_index::SparseIndex::new(tame_index::IndexLocation::new(
-            tame_index::IndexUrl::CratesIoSparse,
-        ))?;
-
+    pub fn open(
+        index_url: IndexUrl<'_>,
+        certs_source: CertsSource,
+        token: Option<SecretString>,
+    ) -> Result<Self, crate::error::CliError> {
+        let index = tame_index::SparseIndex::new(tame_index::IndexLocation::new(index_url))?;
         let client = {
             let builder = tame_index::external::reqwest::blocking::ClientBuilder::new();
 
             let builder = match certs_source {
                 CertsSource::Webpki => builder.tls_built_in_webpki_certs(true),
                 CertsSource::Native => builder.tls_built_in_native_certs(true),
+            };
+
+            let builder = match token {
+                None => builder,
+                Some(token) => {
+                    let mut headers = tame_index::external::reqwest::header::HeaderMap::new();
+                    let token = token.expose_secret();
+                    let authorization_header =
+                        tame_index::external::http::header::HeaderValue::from_str(token).map_err(
+                            |e| anyhow::anyhow!("Failed to set authorization header {:?}", e),
+                        )?;
+                    headers.insert(
+                        tame_index::external::http::header::AUTHORIZATION,
+                        authorization_header,
+                    );
+                    builder.default_headers(headers)
+                }
             };
 
             builder.build()?
