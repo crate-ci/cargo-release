@@ -231,7 +231,7 @@ dependencies = [
 
 [[package]]
 name = "cargo-release"
-version = "0.25.22"
+version = "1.0.0"
 dependencies = [
  "anstream",
  "anyhow",

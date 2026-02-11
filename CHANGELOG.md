@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [1.0.0] - 2026-02-11
+
 ## [0.25.22] - 2025-11-13
 
 ### Fixes
@@ -807,7 +809,8 @@ git.
 * Doc update
 
 <!-- next-url -->
-[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v0.25.22...HEAD
+[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/crate-ci/cargo-release/compare/v0.25.22...v1.0.0
 [0.25.22]: https://github.com/crate-ci/cargo-release/compare/v0.25.21...v0.25.22
 [0.25.21]: https://github.com/crate-ci/cargo-release/compare/v0.25.20...v0.25.21
 [0.25.20]: https://github.com/crate-ci/cargo-release/compare/v0.25.19...v0.25.20
