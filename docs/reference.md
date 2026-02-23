@@ -258,7 +258,9 @@ See also
 
 - Type: list of arguments
 
-Provide a command to run before `cargo-release` commits version change. If the return code of hook command is greater than 0, the release process will be aborted.
+Provide a command to run before `cargo-release` commits version change.
+[Placeholders](#placeholders) can be used within the arguments.
+If the return code of hook command is greater than 0, the release process will be aborted.
 
 The following environment variables are made available to `pre-release-hook`:
 
