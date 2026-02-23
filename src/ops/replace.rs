@@ -17,6 +17,7 @@ pub struct Template<'a> {
     pub version: Option<&'a str>,
     pub metadata: Option<&'a str>,
     pub crate_name: Option<&'a str>,
+    pub repository: Option<&'a str>,
     pub date: Option<&'a str>,
 
     pub prefix: Option<&'a str>,
@@ -30,6 +31,7 @@ impl Template<'_> {
         const VERSION: &str = "{{version}}";
         const METADATA: &str = "{{metadata}}";
         const CRATE_NAME: &str = "{{crate_name}}";
+        const REPOSITORY: &str = "{{repository}}";
         const DATE: &str = "{{date}}";
 
         const PREFIX: &str = "{{prefix}}";
@@ -41,6 +43,7 @@ impl Template<'_> {
         s = render_var(s, VERSION, self.version);
         s = render_var(s, METADATA, self.metadata);
         s = render_var(s, CRATE_NAME, self.crate_name);
+        s = render_var(s, REPOSITORY, self.repository);
         s = render_var(s, DATE, self.date);
 
         s = render_var(s, PREFIX, self.prefix);

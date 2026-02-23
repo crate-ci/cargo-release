@@ -436,6 +436,7 @@ Placeholder support:
 | `{{version}}`       | yes                        | yes                | yes if shared or not consolidated | yes      | yes          | yes        |
 | `{{metadata}}`      | yes                        | yes                | yes if shared or not consolidated | yes      | yes          | yes        |
 | `{{crate_name}}`    | yes                        | yes                | yes if not consolidated      | yes           | yes          | yes        |
+| `{{repository}}`    | yes                        | no                 | no                           | no            | no           | no         |
 | `{{date}}`          | yes                        | yes                | yes                          | yes           | no           | no         |
 | `{{prefix}}`        | no                         | no                 | no                           | no            | no           | yes        |
 | `{{tag_name}}`      | no                         | yes                | no                           | yes           | no           | no         |
@@ -448,6 +449,7 @@ The following placeholders are supported:
 * `{{version}}`: The current (bumped) crate version.
 * `{{metadata}}`: The current (bumped) crate version's metadata field.
 * `{{crate_name}}`: The name of the current crate in `Cargo.toml`.
+* `{{repository}}`: Repository of the package as defined in `Cargo.toml`.
 * `{{date}}`: The current date in `%Y-%m-%d` format.
 * `{{prefix}}`: The value prepended to the tag name.
 * `{{tag_name}}`: The name of the git tag.
