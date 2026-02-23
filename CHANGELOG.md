@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Features
+
+- Support TOML 1.1
+- Support `{{repository}}` variable in `pre-release-replacements`
+
+### Performance
+
+- Remove an unused build dependency
+
 ## [1.0.0] - 2026-02-11
 
 ## [0.25.22] - 2025-11-13
