@@ -239,7 +239,7 @@ This field is an array of tables with the following
 
 * `file`: the file to search and replace
 * `search`: [regex](https://docs.rs/regex/latest/regex/) that matches string you want to replace
-* `replace`: the replacement string; you can use the any of the placeholders
+* `replace`: the replacement string; you can use the any of the [placeholders](#placeholders)
   mentioned below. Regex patterns, such as `$1`, are also valid for referring to
   captured groups.
 * `min` (default is `1`): Minimum occurrences of `search`.
@@ -250,6 +250,7 @@ This field is an array of tables with the following
 See [Cargo.toml](https://github.com/crate-ci/cargo-release/blob/master/Cargo.toml) for example.
 
 See also
+- [Placeholders](#placeholders)
 - [FAQ: How do I update my README or other files](faq.md#how-do-i-update-my-readme-or-other-files)
 - [FAQ: Maintaining Changelog](faq.md#maintaining-changelog)
 
