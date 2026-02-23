@@ -164,16 +164,16 @@ env_logger = "0.11"
 globset = { version = "0.4.18", default-features = false }
 dunce = "1.0.5"
 anyhow = "1.0.102"
-git-conventional = "0.12.9"
+git-conventional = "1.0.0"
 similar = "2.7"
-anstream = "0.6.21"
+anstream = "1.0.0"
 
 [dev-dependencies]
 assert_fs = "1.1"
 predicates = "3.1"
 snapbox = "0.6.24"
-trycmd = "0.15.11"
-cargo-test-support = "0.8.1"
+trycmd = "1.0.0"
+cargo-test-support = "0.9.0"
 
 [lints]
 workspace = true
