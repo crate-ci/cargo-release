@@ -434,6 +434,7 @@ The following fields support placeholders for information about your release:
 - `tag-prefix`
 - `tag-name`
 - `pre-release-hook`
+- `pre-release-replacements`
 
 The following placeholders are supported:
 
