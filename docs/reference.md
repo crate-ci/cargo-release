@@ -427,26 +427,30 @@ Target triple to use for the verification build
 
 ### Placeholders
 
-The following fields support placeholders for information about your release:
+Placeholder support:
 
-- `pre-release-replacements`
-- `pre-release-hook`
-- `pre-release-commit-message`
-- `tag-message`
-- `tag-prefix`
-- `tag-name`
+| field               | `pre-release-replacements` | `pre-release-hook` | `pre-release-commit-message` | `tag-message` | `tag-prefix` | `tag-name` |
+|---------------------|----------------------------|--------------------|------------------------------|---------------|--------------|------------|
+| `{{prev_version}}`  | yes                        | yes                | yes if not consolidated      | yes           | yes          | yes        |
+| `{{prev_metadata}}` | yes                        | yes                | yes if not consolidated      | yes           | yes          | yes        |
+| `{{version}}`       | yes                        | yes                | yes if shared or not consolidated | yes      | yes          | yes        |
+| `{{metadata}}`      | yes                        | yes                | yes if shared or not consolidated | yes      | yes          | yes        |
+| `{{crate_name}}`    | yes                        | yes                | yes if not consolidated      | yes           | yes          | yes        |
+| `{{date}}`          | yes                        | yes                | yes                          | yes           | no           | no         |
+| `{{prefix}}`        | no                         | no                 | no                           | no            | no           | yes        |
+| `{{tag_name}}`      | no                         | yes                | no                           | yes           | no           | no         |
+
 
 The following placeholders are supported:
 
 * `{{prev_version}}`: The version before `cargo-release` was executed (before any version bump).
 * `{{prev_metadata}}`: The version's metadata before `cargo-release` was executed (before any version bump).
 * `{{version}}`: The current (bumped) crate version.
-  * Only works for `pre-release-commit-message` when `consolidate-commits = false` or when using `shared-version = true`.
 * `{{metadata}}`: The current (bumped) crate version's metadata field.
 * `{{crate_name}}`: The name of the current crate in `Cargo.toml`.
 * `{{date}}`: The current date in `%Y-%m-%d` format.
-* `{{prefix}}` (only valid for `tag-name` / `tag-message`): The value prepended to the tag name.
-* `{{tag_name}}` (only valid for `tag-message`): The name of the git tag.
+* `{{prefix}}`: The value prepended to the tag name.
+* `{{tag_name}}`: The name of the git tag.
 
 ## Environment variables
 
