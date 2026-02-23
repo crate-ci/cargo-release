@@ -143,37 +143,37 @@ cargo_metadata = "0.23"
 # present, and then to let the user _select_ through configuration which
 # one they want to be used.
 tame-index = { version = "0.25", features = ["sparse", "native-certs"] }
-git2 = { version = "0.20.2", default-features = false }
-toml_edit = { version = "0.23.6", features = ["serde"] }
-toml = "0.9.7"
+git2 = { version = "0.20.4", default-features = false }
+toml_edit = { version = "0.23.10", features = ["serde"] }
+toml = "0.9.12"
 serde = { version = "1.0", features = ["derive"] }
 semver = "1.0"
 quick-error = "2.0"
-regex = "1.11"
-bstr = "1.12.0"
+regex = "1.12"
+bstr = "1.12.1"
 maplit = "1.0"
-indexmap = "2.11"
+indexmap = "2.13"
 time = { version = "0.3", features = ["formatting", "macros"] }
 dirs-next = "2.0"
 ignore = "0.4"
 itertools = "0.14"
-clap = { version = "4.5.48", features = ["derive", "wrap_help"] }
-clap-cargo = { version = "0.18.0", features = ["cargo_metadata"] }
+clap = { version = "4.5.60", features = ["derive", "wrap_help"] }
+clap-cargo = { version = "0.18.3", features = ["cargo_metadata"] }
 log = "0.4"
 env_logger = "0.11"
-globset = { version = "0.4.16", default-features = false }
+globset = { version = "0.4.18", default-features = false }
 dunce = "1.0.5"
-trycmd = "0.15.10"
-anyhow = "1.0.100"
+trycmd = "0.15.11"
+anyhow = "1.0.102"
 git-conventional = "0.12.9"
 similar = "2.7"
-anstream = "0.6.20"
+anstream = "0.6.21"
 
 [dev-dependencies]
 assert_fs = "1.1"
 predicates = "3.1"
-snapbox = "0.6.21"
-cargo-test-support = "0.8.0"
+snapbox = "0.6.24"
+cargo-test-support = "0.8.1"
 
 [lints]
 workspace = true
