@@ -175,8 +175,8 @@ pub fn tag(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliError>
                 version: Some(version_var),
                 metadata: Some(metadata_var),
                 crate_name: Some(crate_name),
-                tag_name: Some(tag_name),
                 date: Some(NOW.as_str()),
+                tag_name: Some(tag_name),
                 ..Default::default()
             };
             let tag_message = template.render(pkg.config.tag_message());
