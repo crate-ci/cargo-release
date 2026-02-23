@@ -281,7 +281,7 @@ See also
 
 A commit message template for release.
 
-See also [Placeholders(#placeholders)
+See also [Placeholders](#placeholders)
 
 ### `tag`
 
@@ -298,7 +298,7 @@ Create git tag for the version
 
 A message template for an annotated tag (set to blank for lightweight tags). The placeholder `{{tag_name}}` and `{{prefix}}` (the tag prefix) is supported in addition to the global placeholders mentioned below.
 
-See also [Placeholders(#placeholders)
+See also [Placeholders](#placeholders)
 
 ### `tag-name`
 
@@ -310,7 +310,7 @@ The name of the git tag.
 The placeholder `{{prefix}}` (the tag prefix) is supported in addition to the global placeholders mentioned below.
 
 See also
-- [Placeholders(#placeholders)
+- [Placeholders](#placeholders)
 - [How do I customize my tagging in a workspace?](faq.md#how-do-i-customize-my-tagging-in-a-workspace)
 
 ### `tag-prefix`
@@ -323,7 +323,7 @@ See also
 
 Prefix of git tag, note that this will override default prefix based on crate name.
 
-See also [Placeholders(#placeholders)
+See also [Placeholders](#placeholders)
 
 ### `push`
 
