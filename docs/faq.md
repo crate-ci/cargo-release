@@ -73,9 +73,16 @@ pre-release-replacements = [
   {file="CHANGELOG.md", search="\\.\\.\\.HEAD", replace="...{{tag_name}}", exactly=1},
   {file="CHANGELOG.md", search="ReleaseDate", replace="{{date}}"},
   {file="CHANGELOG.md", search="<!-- next-header -->", replace="<!-- next-header -->\n\n## [Unreleased] - ReleaseDate", exactly=1},
-  {file="CHANGELOG.md", search="<!-- next-url -->", replace="<!-- next-url -->\n[Unreleased]: https://github.com/assert-rs/predicates-rs/compare/{{tag_name}}...HEAD", exactly=1},
+  {file="CHANGELOG.md", search="<!-- next-url -->", replace="<!-- next-url -->\n[Unreleased]: {{repository}}/compare/{{tag_name}}...HEAD", exactly=1},
 ]
 ```
+
+Pre-defined variables used:
+
+- `{{version}}` is the current release version
+- `{{date}}` is the current date
+- `{{repository}}` is the `repository` field in `Cargo.toml`, in this case it is `https://github.com/assert-rs/predicates-rs`
+- `{{tag_name}}` is the tag being published
 
 `{{version}}` and `{{date}}` are pre-defined variables with value of
 current release version and date.

@@ -184,6 +184,7 @@ pub fn replace(pkg: &plan::PackageRelease, dry_run: bool) -> Result<(), CliError
             version: Some(version_var),
             metadata: Some(metadata_var),
             crate_name: Some(crate_name),
+            repository: pkg.meta.repository.as_deref(),
             date: Some(NOW.as_str()),
             tag_name: pkg.planned_tag.as_deref(),
             ..Default::default()
