@@ -429,12 +429,12 @@ Target triple to use for the verification build
 
 The following fields support placeholders for information about your release:
 
+- `pre-release-replacements`
+- `pre-release-hook`
 - `pre-release-commit-message`
 - `tag-message`
 - `tag-prefix`
 - `tag-name`
-- `pre-release-hook`
-- `pre-release-replacements`
 
 The following placeholders are supported:
 
