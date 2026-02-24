@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [1.1.1] - 2026-02-24
+
 ### Fixes
 
 - Attempt to fix pre-built binaries
@@ -824,7 +826,8 @@ git.
 * Doc update
 
 <!-- next-url -->
-[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/crate-ci/cargo-release/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/crate-ci/cargo-release/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/crate-ci/cargo-release/compare/v0.25.22...v1.0.0
 [0.25.22]: https://github.com/crate-ci/cargo-release/compare/v0.25.21...v0.25.22

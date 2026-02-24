@@ -97,7 +97,7 @@ lto = true
 [package]
 name = "cargo-release"
 description = "Cargo subcommand for you to smooth your release process."
-version = "1.1.0"
+version = "1.1.1"
 readme = "README.md"
 categories = ["development-tools::cargo-plugins"]
 keywords = ["cargo"]
