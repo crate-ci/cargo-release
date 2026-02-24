@@ -89,7 +89,7 @@ jobs:
       if: matrix.build == 'linux' || matrix.build == 'linux-aarch64'
       run: |
         sudo apt-get update
-        sudo apt-get install -y --no-install-recommends xz-utils liblz4-tool libssl-dev
+        sudo apt-get install -y --no-install-recommends xz-utils liblz4-tool libssl-dev musl-tools
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
       with:
