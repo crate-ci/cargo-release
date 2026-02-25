@@ -17,3 +17,8 @@ repos:
     rev: v1.1.10
     hooks:
     - id: committed
+  - repo: https://github.com/zimbatm/mdsh.git
+    rev: v0.9.2
+    hooks:
+    - id: mdsh
+      files: ".*\\.md"
