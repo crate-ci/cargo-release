@@ -172,8 +172,8 @@ anstream = "1.0.0"
 assert_fs = "1.1"
 predicates = "3.1"
 snapbox = "0.6.24"
-trycmd = "1.0.0"
-cargo-test-support = "0.9.0"
+trycmd = "1.0.1"
+cargo-test-support = "0.9.1"
 
 [lints]
 workspace = true
