@@ -75,10 +75,16 @@ pub fn warn(message: impl std::fmt::Display) -> CargoResult<()> {
     print("warning", message, WARN, false)
 }
 
-/// Print a styled warning message.
 pub fn note(message: impl std::fmt::Display) -> CargoResult<()> {
     let report = &[annotate_snippets::Group::with_title(
         annotate_snippets::Level::NOTE.secondary_title(message.to_string()),
+    )];
+    print_report(report)
+}
+
+pub fn help(message: impl std::fmt::Display) -> CargoResult<()> {
+    let report = &[annotate_snippets::Group::with_title(
+        annotate_snippets::Level::HELP.secondary_title(message.to_string()),
     )];
     print_report(report)
 }

@@ -251,11 +251,11 @@ pub fn changes(
                         CommitStatus::Ignore => None,
                     };
                     if let Some(suggested) = suggested {
-                        let _ = crate::ops::shell::note(format!(
+                        let _ = crate::ops::shell::help(format!(
                             "to update the version, run `cargo release version -p {crate_name} {suggested}`"
                         ));
                     } else if unbumped {
-                        let _ = crate::ops::shell::note(format!(
+                        let _ = crate::ops::shell::help(format!(
                             "to update the version, run `cargo release version -p {crate_name} <LEVEL|VERSION>`"
                         ));
                     }
