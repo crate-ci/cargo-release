@@ -2,7 +2,7 @@ use std::io::{Write, stdin, stdout};
 
 use anyhow::Context as _;
 use clap::builder::styling::Style;
-use clap_cargo::style::{ERROR, HEADER, WARN};
+use clap_cargo::style::HEADER;
 
 use crate::error::CargoResult;
 
@@ -67,12 +67,18 @@ pub fn status(action: &str, message: impl std::fmt::Display) -> CargoResult<()> 
 
 /// Print a styled error message.
 pub fn error(message: impl std::fmt::Display) -> CargoResult<()> {
-    print("error", message, ERROR, false)
+    let report = &[annotate_snippets::Group::with_title(
+        annotate_snippets::Level::ERROR.primary_title(message.to_string()),
+    )];
+    print_report(report)
 }
 
 /// Print a styled warning message.
 pub fn warn(message: impl std::fmt::Display) -> CargoResult<()> {
-    print("warning", message, WARN, false)
+    let report = &[annotate_snippets::Group::with_title(
+        annotate_snippets::Level::WARNING.primary_title(message.to_string()),
+    )];
+    print_report(report)
 }
 
 pub fn note(message: impl std::fmt::Display) -> CargoResult<()> {
