@@ -18,7 +18,7 @@
   <text xml:space="preserve" class="container fg">
     <tspan x="10px" y="28px"><tspan>warning: uncommitted changes detected, please resolve before release:</tspan>
 </tspan>
-    <tspan x="10px" y="46px"><tspan>  target/ (Status(WT_NEW))</tspan>
+    <tspan x="10px" y="46px"><tspan>           target/ (Status(WT_NEW))</tspan>
 </tspan>
     <tspan x="10px" y="64px"><tspan>error: cannot downgrade sample from 0.0.1 to 0.1.0</tspan>
 </tspan>

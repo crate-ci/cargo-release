@@ -2,7 +2,7 @@ use std::io::{Write, stdin, stdout};
 
 use anyhow::Context as _;
 use clap::builder::styling::Style;
-use clap_cargo::style::{ERROR, HEADER, NOTE, WARN};
+use clap_cargo::style::HEADER;
 
 use crate::error::CargoResult;
 
@@ -40,6 +40,26 @@ pub fn print(
     Ok(())
 }
 
+/// Prints the passed in [`Report`][annotate_snippets::Report] to stderr
+pub fn print_report(report: annotate_snippets::Report<'_>) -> CargoResult<()> {
+    let decor_style = if cargo_term_unicode().unwrap_or_else(supports_unicode::supports_unicode) {
+        annotate_snippets::renderer::DecorStyle::Unicode
+    } else {
+        annotate_snippets::renderer::DecorStyle::Ascii
+    };
+    let rendered = annotate_snippets::Renderer::styled()
+        .decor_style(decor_style)
+        .render(report);
+    let mut stderr = anstream::stderr().lock();
+    stderr.write_all(rendered.as_bytes())?;
+    stderr.write_all(b"\n")?;
+    Ok(())
+}
+
+fn cargo_term_unicode() -> Option<bool> {
+    std::env::var_os("CARGO_TERM_UNICODE").map(|v| v == "true")
+}
+
 /// Print a styled action message.
 pub fn status(action: &str, message: impl std::fmt::Display) -> CargoResult<()> {
     print(action, message, HEADER, true)
@@ -47,17 +67,41 @@ pub fn status(action: &str, message: impl std::fmt::Display) -> CargoResult<()> 
 
 /// Print a styled error message.
 pub fn error(message: impl std::fmt::Display) -> CargoResult<()> {
-    print("error", message, ERROR, false)
+    let report = &[annotate_snippets::Group::with_title(
+        annotate_snippets::Level::ERROR.primary_title(message.to_string()),
+    )];
+    print_report(report)
 }
 
 /// Print a styled warning message.
 pub fn warn(message: impl std::fmt::Display) -> CargoResult<()> {
-    print("warning", message, WARN, false)
+    let report = &[annotate_snippets::Group::with_title(
+        annotate_snippets::Level::WARNING.primary_title(message.to_string()),
+    )];
+    print_report(report)
 }
 
-/// Print a styled warning message.
 pub fn note(message: impl std::fmt::Display) -> CargoResult<()> {
-    print("note", message, NOTE, false)
+    let report = &[annotate_snippets::Group::with_title(
+        annotate_snippets::Level::NOTE.secondary_title(message.to_string()),
+    )];
+    print_report(report)
+}
+
+pub fn help(message: impl std::fmt::Display) -> CargoResult<()> {
+    let report = &[annotate_snippets::Group::with_title(
+        annotate_snippets::Level::HELP.secondary_title(message.to_string()),
+    )];
+    print_report(report)
+}
+
+pub fn level(level: log::Level) -> Option<annotate_snippets::Level<'static>> {
+    match level {
+        log::Level::Error => Some(annotate_snippets::Level::ERROR),
+        log::Level::Warn => Some(annotate_snippets::Level::WARNING),
+        log::Level::Info => Some(annotate_snippets::Level::NOTE),
+        _ => None,
+    }
 }
 
 pub fn log(level: log::Level, message: impl std::fmt::Display) -> CargoResult<()> {

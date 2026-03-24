@@ -165,7 +165,18 @@ pub fn verify_if_behind(
     let branch = crate::ops::git::current_branch(path)?;
     crate::ops::git::fetch(path, git_remote, &branch)?;
     if crate::ops::git::is_behind_remote(path, git_remote, &branch)? {
-        let _ = crate::ops::shell::log(level, format!("{branch} is behind {git_remote}/{branch}"));
+        let title = format!("{branch} is behind {git_remote}/{branch}");
+        if let Some(level) = crate::ops::shell::level(level) {
+            let report = &[
+                annotate_snippets::Group::with_title(level.primary_title(title)),
+                annotate_snippets::Group::with_title(
+                    annotate_snippets::Level::HELP.primary_title(format!("to update your release branch, run `git pull --rebase {git_remote} {branch}`")),
+                ),
+            ];
+            let _ = crate::ops::shell::print_report(report);
+        } else {
+            let _ = crate::ops::shell::log(level, title);
+        }
         if level == log::Level::Error {
             success = false;
             if !dry_run {
