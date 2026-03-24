@@ -95,6 +95,15 @@ pub fn help(message: impl std::fmt::Display) -> CargoResult<()> {
     print_report(report)
 }
 
+pub fn level(level: log::Level) -> Option<annotate_snippets::Level<'static>> {
+    match level {
+        log::Level::Error => Some(annotate_snippets::Level::ERROR),
+        log::Level::Warn => Some(annotate_snippets::Level::WARNING),
+        log::Level::Info => Some(annotate_snippets::Level::NOTE),
+        _ => None,
+    }
+}
+
 pub fn log(level: log::Level, message: impl std::fmt::Display) -> CargoResult<()> {
     match level {
         log::Level::Error => error(message),
