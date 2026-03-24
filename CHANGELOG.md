@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Fixes
+
+- Extend "branch is behind" with suggested git command
+
 ## [1.1.1] - 2026-02-24
 
 ### Fixes
