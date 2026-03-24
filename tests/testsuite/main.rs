@@ -46,6 +46,7 @@ impl CargoCommand for snapbox::cmd::Command {
     fn cargo_ui() -> Self {
         use cargo_test_support::TestEnvCommandExt;
         Self::new(cargo_exe())
+            .env("CARGO_TERM_UNICODE", "true")
             .with_assert(cargo_test_support::compare::assert_ui())
             .test_env()
     }
