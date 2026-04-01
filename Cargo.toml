@@ -144,8 +144,8 @@ cargo_metadata = "0.23"
 # one they want to be used.
 tame-index = { version = "0.25", features = ["sparse", "native-certs"] }
 git2 = { version = "0.20.4", default-features = false }
-toml_edit = { version = "0.25.3", features = ["serde"] }
-toml = "1.0.3"
+toml_edit = { version = "0.25.9", features = ["serde"] }
+toml = "1.1.1"
 serde = { version = "1.0", features = ["derive"] }
 semver = "1.0"
 quick-error = "2.0"
@@ -157,14 +157,14 @@ time = { version = "0.3", features = ["formatting", "macros"] }
 dirs-next = "2.0"
 ignore = "0.4"
 itertools = "0.14"
-clap = { version = "4.5.60", features = ["derive", "wrap_help"] }
+clap = { version = "4.6.0", features = ["derive", "wrap_help"] }
 clap-cargo = { version = "0.18.3", features = ["cargo_metadata"] }
 log = "0.4"
 env_logger = "0.11"
 globset = { version = "0.4.18", default-features = false }
 dunce = "1.0.5"
 anyhow = "1.0.102"
-git-conventional = "1.0.0"
+git-conventional = "1.1.0"
 similar = "2.7"
 anstream = "1.0.0"
 annotate-snippets = "0.12.13"
@@ -174,7 +174,7 @@ supports-unicode = "3.0.0"
 assert_fs = "1.1"
 predicates = "3.1"
 snapbox = "0.6.24"
-trycmd = "1.0.1"
+trycmd = "1.2.0"
 cargo-test-support = "0.9.1"
 
 [lints]
