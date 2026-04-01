@@ -26,7 +26,7 @@ impl ConfigStep {
         let ws_meta = self
             .manifest
             .metadata()
-            // When evaluating dependency ordering, we need to consider optional depednencies
+            // When evaluating dependency ordering, we need to consider optional dependencies
             .features(cargo_metadata::CargoOpt::AllFeatures)
             .exec()?;
 
