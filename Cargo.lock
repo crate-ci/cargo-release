@@ -312,9 +312,9 @@ checksum = "7bd89c170e33cea7b7b15d0b87c53a4c1545e67c5dc5eb3ae1fd623385740dbd"
 
 [[package]]
 name = "cargo-test-support"
-version = "0.9.1"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0c3fb4fd0d68cb7aaf9e6819e6a865955995e79a883c3621a5fd01add3202ea4"
+checksum = "0eb0fda7f0c4293aba46ee5ca037f2a4d1c6e69e317bba813468b17778555cf2"
 dependencies = [
  "anstream 0.6.21",
  "anstyle",
