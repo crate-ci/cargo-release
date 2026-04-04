@@ -185,6 +185,9 @@ pub fn hook(
         let prev_metadata_var = pkg.initial_version.full_version.build.as_str();
         let version_var = version.bare_version_string.as_str();
         let metadata_var = version.full_version.build.as_str();
+        let major_var = version.bare_version.major.to_string();
+        let minor_var = version.bare_version.minor.to_string();
+        let patch_var = version.bare_version.patch.to_string();
         let template = Template {
             prev_version: Some(prev_version_var),
             prev_metadata: Some(prev_metadata_var),
@@ -193,6 +196,9 @@ pub fn hook(
             crate_name: Some(crate_name),
             date: Some(NOW.as_str()),
             tag_name: pkg.planned_tag.as_deref(),
+            major: Some(&major_var),
+            minor: Some(&minor_var),
+            patch: Some(&patch_var),
             ..Default::default()
         };
         let pre_rel_hook = pre_rel_hook
@@ -206,6 +212,9 @@ pub fn hook(
             OsStr::new("PREV_METADATA") => prev_metadata_var.as_ref(),
             OsStr::new("NEW_VERSION") => version_var.as_ref(),
             OsStr::new("NEW_METADATA") => metadata_var.as_ref(),
+            OsStr::new("NEW_MAJOR") => OsStr::new(major_var.as_str()),
+            OsStr::new("NEW_MINOR") => OsStr::new(minor_var.as_str()),
+            OsStr::new("NEW_PATCH") => OsStr::new(patch_var.as_str()),
             OsStr::new("DRY_RUN") => OsStr::new(if dry_run { "true" } else { "false" }),
             OsStr::new("CRATE_NAME") => OsStr::new(crate_name),
             OsStr::new("WORKSPACE_ROOT") => ws_meta.workspace_root.as_os_str(),

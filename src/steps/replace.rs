@@ -177,6 +177,9 @@ pub fn replace(pkg: &plan::PackageRelease, dry_run: bool) -> Result<(), CliError
         let prev_metadata_var = pkg.initial_version.full_version.build.as_str();
         let version_var = version.bare_version_string.as_str();
         let metadata_var = version.full_version.build.as_str();
+        let major_var = version.bare_version.major.to_string();
+        let minor_var = version.bare_version.minor.to_string();
+        let patch_var = version.bare_version.patch.to_string();
         // try replacing text in configured files
         let template = Template {
             prev_version: Some(prev_version_var),
@@ -187,6 +190,9 @@ pub fn replace(pkg: &plan::PackageRelease, dry_run: bool) -> Result<(), CliError
             repository: pkg.meta.repository.as_deref(),
             date: Some(NOW.as_str()),
             tag_name: pkg.planned_tag.as_deref(),
+            major: Some(&major_var),
+            minor: Some(&minor_var),
+            patch: Some(&patch_var),
             ..Default::default()
         };
         let prerelease = version.is_prerelease();

@@ -279,12 +279,18 @@ fn render_tag(
     let existing_metadata_var = prev.full_version.build.as_str();
     let version_var = base.bare_version_string.as_str();
     let metadata_var = base.full_version.build.as_str();
+    let major_var = base.bare_version.major.to_string();
+    let minor_var = base.bare_version.minor.to_string();
+    let patch_var = base.bare_version.patch.to_string();
     let mut template = Template {
         prev_version: Some(initial_version_var),
         prev_metadata: Some(existing_metadata_var),
         version: Some(version_var),
         metadata: Some(metadata_var),
         crate_name: Some(name),
+        major: Some(&major_var),
+        minor: Some(&minor_var),
+        patch: Some(&patch_var),
         ..Default::default()
     };
 
@@ -304,6 +310,9 @@ fn render_tag_glob(tag_name: &str, tag_prefix: &str, name: &str) -> String {
         version: Some(version_var),
         metadata: Some(metadata_var),
         crate_name: Some(name),
+        major: Some("*"),
+        minor: Some("*"),
+        patch: Some("*"),
         ..Default::default()
     };
 
