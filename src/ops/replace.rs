@@ -19,6 +19,9 @@ pub struct Template<'a> {
     pub crate_name: Option<&'a str>,
     pub repository: Option<&'a str>,
     pub date: Option<&'a str>,
+    pub major: Option<&'a str>,
+    pub minor: Option<&'a str>,
+    pub patch: Option<&'a str>,
 
     pub prefix: Option<&'a str>,
     pub tag_name: Option<&'a str>,
@@ -33,6 +36,9 @@ impl Template<'_> {
         const CRATE_NAME: &str = "{{crate_name}}";
         const REPOSITORY: &str = "{{repository}}";
         const DATE: &str = "{{date}}";
+        const MAJOR: &str = "{{major}}";
+        const MINOR: &str = "{{minor}}";
+        const PATCH: &str = "{{patch}}";
 
         const PREFIX: &str = "{{prefix}}";
         const TAG_NAME: &str = "{{tag_name}}";
@@ -45,6 +51,9 @@ impl Template<'_> {
         s = render_var(s, CRATE_NAME, self.crate_name);
         s = render_var(s, REPOSITORY, self.repository);
         s = render_var(s, DATE, self.date);
+        s = render_var(s, MAJOR, self.major);
+        s = render_var(s, MINOR, self.minor);
+        s = render_var(s, PATCH, self.patch);
 
         s = render_var(s, PREFIX, self.prefix);
         s = render_var(s, TAG_NAME, self.tag_name);

@@ -132,6 +132,9 @@ pub fn pkg_commit(pkg: &plan::PackageRelease, dry_run: bool) -> Result<(), CliEr
     let prev_metadata_var = pkg.initial_version.full_version.build.as_str();
     let version_var = version.bare_version_string.as_str();
     let metadata_var = version.full_version.build.as_str();
+    let major_var = version.bare_version.major.to_string();
+    let minor_var = version.bare_version.minor.to_string();
+    let patch_var = version.bare_version.patch.to_string();
     let template = Template {
         prev_version: Some(prev_version_var),
         prev_metadata: Some(prev_metadata_var),
@@ -139,6 +142,9 @@ pub fn pkg_commit(pkg: &plan::PackageRelease, dry_run: bool) -> Result<(), CliEr
         metadata: Some(metadata_var),
         crate_name: Some(crate_name),
         date: Some(NOW.as_str()),
+        major: Some(&major_var),
+        minor: Some(&minor_var),
+        patch: Some(&patch_var),
         ..Default::default()
     };
     let commit_msg = template.render(pkg.config.pre_release_commit_message());
@@ -166,10 +172,22 @@ pub fn workspace_commit(
         let metadata_var = shared_version
             .as_ref()
             .map(|v| v.full_version.build.as_str());
+        let major_var = shared_version
+            .as_ref()
+            .map(|v| v.bare_version.major.to_string());
+        let minor_var = shared_version
+            .as_ref()
+            .map(|v| v.bare_version.minor.to_string());
+        let patch_var = shared_version
+            .as_ref()
+            .map(|v| v.bare_version.patch.to_string());
         let template = Template {
             version: version_var,
             metadata: metadata_var,
             date: Some(NOW.as_str()),
+            major: major_var.as_deref(),
+            minor: minor_var.as_deref(),
+            patch: patch_var.as_deref(),
             ..Default::default()
         };
         template.render(ws_config.pre_release_commit_message())

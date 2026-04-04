@@ -169,6 +169,9 @@ pub fn tag(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliError>
             let prev_metadata_var = pkg.initial_version.full_version.build.as_str();
             let version_var = version.bare_version_string.as_str();
             let metadata_var = version.full_version.build.as_str();
+            let major_var = version.bare_version.major.to_string();
+            let minor_var = version.bare_version.minor.to_string();
+            let patch_var = version.bare_version.patch.to_string();
             let template = Template {
                 prev_version: Some(prev_version_var),
                 prev_metadata: Some(prev_metadata_var),
@@ -177,6 +180,9 @@ pub fn tag(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliError>
                 crate_name: Some(crate_name),
                 date: Some(NOW.as_str()),
                 tag_name: Some(tag_name),
+                major: Some(&major_var),
+                minor: Some(&minor_var),
+                patch: Some(&patch_var),
                 ..Default::default()
             };
             let tag_message = template.render(pkg.config.tag_message());
