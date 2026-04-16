@@ -12,6 +12,11 @@ fn do_call(
     dry_run: bool,
 ) -> CargoResult<bool> {
     let command: Vec<_> = command.into_iter().map(|s| s.into()).collect();
+    
+    if command.is_empty() {
+        return Ok(true);
+    }
+    
     if let Some(path) = path {
         log::trace!("cd {}", path.display());
     }
