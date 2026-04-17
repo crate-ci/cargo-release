@@ -1,4 +1,5 @@
 {
+  extends: ["helpers:pinGitHubActionDigests"],
   schedule: [
     'before 5am on the first day of the month',
   ],
@@ -64,7 +65,7 @@
       matchDepNames: [
         'prek',
       ],
-      extractVersion: '^(?<version>\\d+\\.\\d+\\.\\d+)',
+      extractVersion: '^v(?<version>\\d+\\.\\d+\\.\\d+)',
       schedule: [
         '* * * * *',
       ],
