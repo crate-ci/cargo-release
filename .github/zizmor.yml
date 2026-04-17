@@ -1,0 +1,4 @@
+rules:
+  superfluous-actions:
+    # https://github.com/zizmorcore/zizmor/issues/1817
+    disable: true

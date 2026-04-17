@@ -7,13 +7,13 @@ license = "MIT OR Apache-2.0"
 edition = "2024"
 rust-version = "1.92"  # MSRV
 include = [
-  "build.rs",
-  "src/**/*",
-  "Cargo.toml",
-  "Cargo.lock",
-  "LICENSE*",
-  "README.md",
-  "examples/**/*"
+  "/build.rs",
+  "/src/**/*",
+  "/Cargo.toml",
+  "/Cargo.lock",
+  "/LICENSE*",
+  "/README.md",
+  "/examples/**/*"
 ]
 
 [workspace.lints.rust]
@@ -30,6 +30,7 @@ bool_assert_comparison = "allow"
 branches_sharing_code = "allow"
 checked_conversions = "warn"
 collapsible_else_if = "allow"
+collapsible_match = "allow"
 create_dir = "warn"
 dbg_macro = "warn"
 debug_assert_with_mut_call = "warn"
@@ -118,7 +119,7 @@ pre-release-replacements = [
   {file="CHANGELOG.md", search="\\.\\.\\.HEAD", replace="...{{tag_name}}", exactly=1},
   {file="CHANGELOG.md", search="ReleaseDate", replace="{{date}}", min=1},
   {file="CHANGELOG.md", search="<!-- next-header -->", replace="<!-- next-header -->\n## [Unreleased] - ReleaseDate\n", exactly=1},
-  {file="CHANGELOG.md", search="<!-- next-url -->", replace="<!-- next-url -->\n[Unreleased]: https://github.com/crate-ci/cargo-release/compare/{{tag_name}}...HEAD", exactly=1},
+  {file="CHANGELOG.md", search="<!-- next-url -->", replace="<!-- next-url -->\n[Unreleased]: {{repository}}/compare/{{tag_name}}...HEAD", exactly=1},
 ]
 
 [features]
