@@ -41,7 +41,7 @@ jobs:
       with:
         toolchain: ${{ matrix.rust }}
     - name: Initialize cache
-      uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
     - name: Install cargo-hack
       uses: taiki-e/install-action@97a5807a604e12de3a13b52d868ebecaeeea757c  # v2.75.4
       with:
@@ -68,7 +68,7 @@ jobs:
       with:
         toolchain: stable
     - name: Initialize cache
-      uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
     - name: Install cargo-hack
       uses: taiki-e/install-action@97a5807a604e12de3a13b52d868ebecaeeea757c  # v2.75.4
       with:

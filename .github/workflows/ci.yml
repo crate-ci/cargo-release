@@ -51,7 +51,7 @@ jobs:
       with:
         toolchain: ${{ matrix.rust }}
     - name: Initialize cache
-      uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
     - name: Install cargo-hack
       uses: taiki-e/install-action@97a5807a604e12de3a13b52d868ebecaeeea757c  # v2.75.4
       with:
@@ -76,7 +76,7 @@ jobs:
       with:
         toolchain: stable
     - name: Initialize cache
-      uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
     - name: Install cargo-hack
       uses: taiki-e/install-action@97a5807a604e12de3a13b52d868ebecaeeea757c  # v2.75.4
       with:
@@ -95,7 +95,7 @@ jobs:
       with:
         toolchain: stable
     - name: Initialize cache
-      uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
     - name: "Is lockfile updated?"
       run: cargo update --workspace --locked
   docs:
@@ -111,7 +111,7 @@ jobs:
       with:
         toolchain: "1.95"  # STABLE
     - name: Initialize cache
-      uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
     - name: Check documentation
       env:
         RUSTDOCFLAGS: -D warnings
@@ -130,7 +130,7 @@ jobs:
         toolchain: "1.95"  # STABLE
         components: rustfmt
     - name: Initialize cache
-      uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
     - name: Check formatting
       run: cargo fmt --check
   clippy:
@@ -149,7 +149,7 @@ jobs:
         toolchain: "1.95"  # STABLE
         components: clippy
     - name: Initialize cache
-      uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
     - name: Install SARIF tools
       run: cargo install clippy-sarif --locked
     - name: Install SARIF tools
@@ -181,7 +181,7 @@ jobs:
       with:
         toolchain: stable
     - name: Initialize cache
-      uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
     - name: Install cargo-tarpaulin
       run: cargo install cargo-tarpaulin
     - name: Gather coverage

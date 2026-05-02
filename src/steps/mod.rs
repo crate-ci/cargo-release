@@ -517,7 +517,7 @@ impl TargetVersion {
         metadata: Option<&str>,
     ) -> CargoResult<Option<plan::Version>> {
         match self {
-            TargetVersion::Relative(bump_level) => {
+            Self::Relative(bump_level) => {
                 let mut potential_version = current.to_owned();
                 bump_level.bump_version(&mut potential_version, metadata)?;
                 if potential_version != *current {
@@ -528,7 +528,7 @@ impl TargetVersion {
                     Ok(None)
                 }
             }
-            TargetVersion::Absolute(version) => {
+            Self::Absolute(version) => {
                 let mut full_version = version.to_owned();
                 if full_version.build.is_empty() {
                     if let Some(metadata) = metadata {
@@ -550,17 +550,17 @@ impl TargetVersion {
 
 impl Default for TargetVersion {
     fn default() -> Self {
-        TargetVersion::Relative(BumpLevel::Release)
+        Self::Relative(BumpLevel::Release)
     }
 }
 
 impl std::fmt::Display for TargetVersion {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         match self {
-            TargetVersion::Relative(bump_level) => {
+            Self::Relative(bump_level) => {
                 write!(f, "{bump_level}")
             }
-            TargetVersion::Absolute(version) => {
+            Self::Absolute(version) => {
                 write!(f, "{version}")
             }
         }
@@ -572,9 +572,9 @@ impl FromStr for TargetVersion {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if let Ok(bump_level) = BumpLevel::from_str(s) {
-            Ok(TargetVersion::Relative(bump_level))
+            Ok(Self::Relative(bump_level))
         } else {
-            Ok(TargetVersion::Absolute(
+            Ok(Self::Absolute(
                 semver::Version::parse(s).map_err(|e| e.to_string())?,
             ))
         }
@@ -670,31 +670,31 @@ impl BumpLevel {
         metadata: Option<&str>,
     ) -> CargoResult<()> {
         match self {
-            BumpLevel::Major => {
+            Self::Major => {
                 version.increment_major();
             }
-            BumpLevel::Minor => {
+            Self::Minor => {
                 version.increment_minor();
             }
-            BumpLevel::Patch => {
+            Self::Patch => {
                 if !version.is_prerelease() {
                     version.increment_patch();
                 } else {
                     version.pre = semver::Prerelease::EMPTY;
                 }
             }
-            BumpLevel::Release => {
+            Self::Release => {
                 if version.is_prerelease() {
                     version.pre = semver::Prerelease::EMPTY;
                 }
             }
-            BumpLevel::Rc => {
+            Self::Rc => {
                 version.increment_rc()?;
             }
-            BumpLevel::Beta => {
+            Self::Beta => {
                 version.increment_beta()?;
             }
-            BumpLevel::Alpha => {
+            Self::Alpha => {
                 version.increment_alpha()?;
             }
         };
