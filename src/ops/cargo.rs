@@ -512,7 +512,7 @@ fn atomic_write(path: &Path, data: &str) -> std::io::Result<()> {
 mod test {
     use super::*;
 
-    #[allow(unused_imports)] // Not being detected
+    #[allow(unused_imports, reason = "prelude false positive")]
     use assert_fs::prelude::*;
     use predicates::prelude::*;
 

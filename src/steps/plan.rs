@@ -179,7 +179,7 @@ impl PackageRelease {
         let planned_tag = None;
         let ensure_owners = config.publish() && !config.owners().is_empty();
 
-        let pkg = PackageRelease {
+        let pkg = Self {
             meta,
             manifest_path,
             package_root,

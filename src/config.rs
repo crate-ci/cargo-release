@@ -48,8 +48,8 @@ impl Config {
     }
 
     pub fn from_defaults() -> Self {
-        let empty = Config::new();
-        Config {
+        let empty = Self::new();
+        Self {
             is_workspace: true,
             unstable: Unstable::from_defaults(),
             allow_branch: Some(
@@ -94,7 +94,7 @@ impl Config {
         }
     }
 
-    pub fn update(&mut self, source: &Config) {
+    pub fn update(&mut self, source: &Self) {
         self.unstable.update(&source.unstable);
         if let Some(allow_branch) = source.allow_branch.as_deref() {
             self.allow_branch = Some(allow_branch.to_owned());
@@ -347,7 +347,7 @@ impl Unstable {
 
 impl From<Vec<UnstableValues>> for Unstable {
     fn from(values: Vec<UnstableValues>) -> Self {
-        let mut unstable = Unstable::new();
+        let mut unstable = Self::new();
         for value in values {
             match value {
                 UnstableValues::WorkspacePublish(value) => unstable.workspace_publish = Some(value),
@@ -380,8 +380,8 @@ pub enum Command {
 impl Command {
     pub fn args(&self) -> Vec<&str> {
         match self {
-            Command::Line(s) => vec![s.as_str()],
-            Command::Args(a) => a.iter().map(|s| s.as_str()).collect(),
+            Self::Line(s) => vec![s.as_str()],
+            Self::Args(a) => a.iter().map(|s| s.as_str()).collect(),
         }
     }
 }
@@ -439,9 +439,9 @@ impl SharedVersion {
 
     pub fn as_name(&self) -> Option<&str> {
         match self {
-            SharedVersion::Enabled(true) => Some("default"),
-            SharedVersion::Enabled(false) => None,
-            SharedVersion::Name(name) => Some(name.as_str()),
+            Self::Enabled(true) => Some("default"),
+            Self::Enabled(false) => None,
+            Self::Name(name) => Some(name.as_str()),
         }
     }
 }
@@ -541,7 +541,7 @@ impl RateLimit {
         }
     }
 
-    pub fn update(&mut self, source: &RateLimit) {
+    pub fn update(&mut self, source: &Self) {
         if source.new_packages.is_some() {
             self.new_packages = source.new_packages;
         }
@@ -720,7 +720,7 @@ impl std::str::FromStr for UnstableValues {
                         "unsupported value `{name}={value}`, expected one of `true`, `false`"
                     ),
                 };
-                Ok(UnstableValues::WorkspacePublish(value))
+                Ok(Self::WorkspacePublish(value))
             }
             _ => {
                 anyhow::bail!("unsupported unstable feature name `{name}` (value `{value}`)");

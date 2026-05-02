@@ -1,5 +1,4 @@
 #![expect(clippy::exit, reason = "is binary")]
-#![allow(clippy::comparison_chain)]
 
 use clap::Parser;
 
