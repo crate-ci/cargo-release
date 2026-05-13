@@ -11,4 +11,5 @@ mod upgrade_workspace;
 mod virtual_workspace_deps;
 mod workspace_deps;
 mod workspace_version_exclude;
+mod workspace_pkg_commit_message;
 mod workspace_version_subset;
