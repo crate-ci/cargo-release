@@ -73,11 +73,13 @@ impl ReleaseStep {
             {
                 pkg.bump(level_or_version, self.metadata.as_deref())?;
             }
-            if index.has_krate(
-                pkg.config.registry(),
-                &pkg.meta.name,
-                pkg.config.certs_source(),
-            )? {
+            if pkg.config.publish()
+                && index.has_krate(
+                    pkg.config.registry(),
+                    &pkg.meta.name,
+                    pkg.config.certs_source(),
+                )?
+            {
                 // Already published, skip it.  Use `cargo release owner` for one-time updates
                 pkg.ensure_owners = false;
             }
