@@ -157,13 +157,14 @@ pub fn workspace_commit(
     pkgs: &[plan::PackageRelease],
     dry_run: bool,
 ) -> Result<(), CliError> {
-    let shared_version = super::find_shared_versions(pkgs)?;
+    let effective_version =
+        super::find_shared_versions(pkgs)?.or_else(|| super::find_common_version(pkgs));
 
     let shared_commit_msg = {
-        let version_var = shared_version
+        let version_var = effective_version
             .as_ref()
             .map(|v| v.bare_version_string.as_str());
-        let metadata_var = shared_version
+        let metadata_var = effective_version
             .as_ref()
             .map(|v| v.full_version.build.as_str());
         let template = Template {

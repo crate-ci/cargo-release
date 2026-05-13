@@ -431,6 +431,18 @@ pub fn find_shared_versions(
     }
 }
 
+pub fn find_common_version(pkgs: &[plan::PackageRelease]) -> Option<plan::Version> {
+    let mut versions = pkgs
+        .iter()
+        .map(|pkg| pkg.planned_version.as_ref().unwrap_or(&pkg.initial_version));
+    let first = versions.next()?;
+    if versions.all(|x| x.bare_version == first.bare_version) {
+        Some(first.clone())
+    } else {
+        None
+    }
+}
+
 pub fn consolidate_commits(
     selected_pkgs: &[plan::PackageRelease],
     excluded_pkgs: &[plan::PackageRelease],
