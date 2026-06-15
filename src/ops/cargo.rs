@@ -645,3 +645,152 @@ mod test {
         }
     }
 }
+
+pub fn extract_features_docs(manifest_path: &Path) -> CargoResult<Option<String>> {
+    let manifest_str = std::fs::read_to_string(manifest_path)?;
+    let doc: toml_edit::DocumentMut = manifest_str.parse()?;
+    
+    let mut top_comment = String::new();
+    let mut features_out = Vec::new();
+
+    let mut default_features = std::collections::HashSet::<String>::new();
+    
+    if let Some(features) = doc.get("features").and_then(|i| i.as_table()) {
+        if let Some(def) = features.get("default").and_then(|i| i.as_array()) {
+            for v in def.iter() {
+                if let Some(s) = v.as_str() {
+                    default_features.insert(s.to_string());
+                }
+            }
+        }
+        
+        for (key, _val) in features.iter() {
+            if let Some(key_mut) = features.key(key) {
+                if let Some(prefix) = key_mut.leaf_decor().prefix().and_then(|s| s.as_str()) {
+                    let mut feat_comment = String::new();
+                    for line in prefix.lines() {
+                        let line = line.trim();
+                        if let Some(x) = line.strip_prefix("#!") {
+                            if x.is_empty() || x.starts_with(' ') {
+                                let x = x.strip_prefix(' ').unwrap_or(x);
+                                if top_comment.is_empty() && !features_out.is_empty() {
+                                    top_comment.push('\n');
+                                }
+                                top_comment.push_str(x);
+                                top_comment.push('\n');
+                            }
+                        } else if let Some(x) = line.strip_prefix("##") {
+                            if x.is_empty() || x.starts_with(' ') {
+                                let x = x.strip_prefix(' ').unwrap_or(x);
+                                if !feat_comment.is_empty() {
+                                    feat_comment.push(' ');
+                                }
+                                feat_comment.push_str(x);
+                            }
+                        }
+                    }
+                    if !feat_comment.is_empty() {
+                        features_out.push((key.to_string(), std::mem::take(&mut top_comment), feat_comment));
+                    }
+                }
+            }
+        }
+    }
+    
+    if let Some(deps) = doc.get("dependencies").and_then(|i| i.as_table()) {
+        for (key, val) in deps.iter() {
+            let is_optional = val.get("optional").and_then(|i| i.as_bool()).unwrap_or(false);
+            if is_optional {
+                if let Some(key_mut) = deps.key(key) {
+                    if let Some(prefix) = key_mut.leaf_decor().prefix().and_then(|s| s.as_str()) {
+                        let mut feat_comment = String::new();
+                        for line in prefix.lines() {
+                            let line = line.trim();
+                            if let Some(x) = line.strip_prefix("#!") {
+                                if x.is_empty() || x.starts_with(' ') {
+                                    let x = x.strip_prefix(' ').unwrap_or(x);
+                                    if top_comment.is_empty() && !features_out.is_empty() {
+                                        top_comment.push('\n');
+                                    }
+                                    top_comment.push_str(x);
+                                    top_comment.push('\n');
+                                }
+                            } else if let Some(x) = line.strip_prefix("##") {
+                                if x.is_empty() || x.starts_with(' ') {
+                                    let x = x.strip_prefix(' ').unwrap_or(x);
+                                    if !feat_comment.is_empty() {
+                                        feat_comment.push(' ');
+                                    }
+                                    feat_comment.push_str(x);
+                                }
+                            }
+                        }
+                        if !feat_comment.is_empty() {
+                            features_out.push((key.to_string(), std::mem::take(&mut top_comment), feat_comment));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if features_out.is_empty() {
+        return Ok(None);
+    }
+    
+    let mut result = String::new();
+    for (f, top, comment) in features_out {
+        let default = if default_features.contains(&f) { " *(enabled by default)*" } else { "" };
+        let comment = if comment.trim().is_empty() {
+            String::new()
+        } else {
+            format!(" — {}", comment.trim())
+        };
+
+        result.push_str(&format!(
+            "{}* **`{}`**{}{}\n",
+            top,
+            f,
+            default,
+            comment,
+        ));
+    }
+    result.push_str(&top_comment);
+    
+    Ok(Some(result.trim().to_string()))
+}
+
+#[cfg(test)]
+mod extract_features_docs_test {
+    use super::*;
+    use assert_fs::fixture::PathChild;
+
+    #[test]
+    fn test_extract_features_docs() {
+        let temp = assert_fs::TempDir::new().unwrap();
+        let manifest_path = temp.child("Cargo.toml");
+        assert_fs::prelude::FileWriteStr::write_str(&manifest_path, r#"
+[package]
+name = "test"
+version = "0.1.0"
+
+[features]
+#! Top level 1
+# This is my feature
+my_feature = []
+
+## A documented feature
+## with multiple lines
+doc_feature = []
+
+[dependencies]
+#! Optional deps section
+## An optional dep
+serde = { version = "1", optional = true }
+"#).unwrap();
+
+        let docs = extract_features_docs(manifest_path.path()).unwrap().unwrap();
+        assert_eq!(docs, "Top level 1\n* **`doc_feature`** — A documented feature with multiple lines\n\nOptional deps section\n* **`serde`** — An optional dep");
+        temp.close().unwrap();
+    }
+}

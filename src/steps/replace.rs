@@ -172,6 +172,7 @@ pub fn replace(pkg: &plan::PackageRelease, dry_run: bool) -> Result<(), CliError
     let version = pkg.planned_version.as_ref().unwrap_or(&pkg.initial_version);
     if !pkg.config.pre_release_replacements().is_empty() {
         let cwd = &pkg.package_root;
+        let features_docs = crate::ops::cargo::extract_features_docs(&pkg.manifest_path).unwrap_or(None);
         let crate_name = pkg.meta.name.as_str();
         let prev_version_var = pkg.initial_version.bare_version_string.as_str();
         let prev_metadata_var = pkg.initial_version.full_version.build.as_str();
@@ -187,6 +188,7 @@ pub fn replace(pkg: &plan::PackageRelease, dry_run: bool) -> Result<(), CliError
             repository: pkg.meta.repository.as_deref(),
             date: Some(NOW.as_str()),
             tag_name: pkg.planned_tag.as_deref(),
+            features: features_docs.as_deref(),
             ..Default::default()
         };
         let prerelease = version.is_prerelease();

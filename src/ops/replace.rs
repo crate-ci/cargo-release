@@ -22,6 +22,7 @@ pub struct Template<'a> {
 
     pub prefix: Option<&'a str>,
     pub tag_name: Option<&'a str>,
+    pub features: Option<&'a str>,
 }
 
 impl Template<'_> {
@@ -36,6 +37,7 @@ impl Template<'_> {
 
         const PREFIX: &str = "{{prefix}}";
         const TAG_NAME: &str = "{{tag_name}}";
+        const FEATURES: &str = "{{features}}";
 
         let mut s = input.to_owned();
         s = render_var(s, PREV_VERSION, self.prev_version);
@@ -48,6 +50,7 @@ impl Template<'_> {
 
         s = render_var(s, PREFIX, self.prefix);
         s = render_var(s, TAG_NAME, self.tag_name);
+        s = render_var(s, FEATURES, self.features);
         s
     }
 }

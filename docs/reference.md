@@ -456,6 +456,7 @@ Placeholder support:
 | `{{date}}`          | yes                        | yes                | yes                          | yes           | no           | no         |
 | `{{prefix}}`        | no                         | no                 | no                           | no            | no           | yes        |
 | `{{tag_name}}`      | no                         | yes                | no                           | yes           | no           | no         |
+| `{{features}}`      | yes                        | no                 | no                           | no            | no           | no         |
 
 
 The following placeholders are supported:
@@ -466,6 +467,7 @@ The following placeholders are supported:
 * `{{metadata}}`: The current (bumped) crate version's metadata field.
 * `{{crate_name}}`: The name of the current crate in `Cargo.toml`.
 * `{{repository}}`: Repository of the package as defined in `Cargo.toml`.
+* `{{features}}`: Extracted feature flag documentation from `Cargo.toml`.
 * `{{date}}`: The current date in `%Y-%m-%d` format.
 * `{{prefix}}`: The value prepended to the tag name.
 * `{{tag_name}}`: The name of the git tag.
