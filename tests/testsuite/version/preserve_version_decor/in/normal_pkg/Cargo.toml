@@ -1,0 +1,7 @@
+[package]
+name = "normal_pkg"
+version = "0.1.0" # crate version
+edition = "2021"
+
+[dependencies]
+inherit_ws_version = {path = "../inherit_ws_version", version = "0.2"}

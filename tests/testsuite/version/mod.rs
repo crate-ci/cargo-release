@@ -1,6 +1,7 @@
 mod downgrade_error;
 mod dry_run;
 mod ignore_dependent;
+mod preserve_version_decor;
 mod set_absolute_version;
 mod set_absolute_workspace_version;
 mod set_relative_version;

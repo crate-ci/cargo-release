@@ -1,0 +1,11 @@
+[workspace.package]
+version = "0.2.0" # shared version
+
+[workspace]
+members = [
+    "inherit_ws_version",
+    "normal_pkg",
+]
+
+[workspace.dependencies]
+inherit_ws_version = {path = "./inherit_ws_version", version = "0.2"}
