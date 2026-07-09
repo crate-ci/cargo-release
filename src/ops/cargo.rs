@@ -147,7 +147,13 @@ pub fn set_workspace_version(
 ) -> CargoResult<()> {
     let original_manifest = std::fs::read_to_string(manifest_path)?;
     let mut manifest: toml_edit::DocumentMut = original_manifest.parse()?;
-    manifest["workspace"]["package"]["version"] = toml_edit::value(version);
+    overwrite_toml_value(
+        manifest["workspace"]["package"]
+            .as_table_like_mut()
+            .expect("workspace.package table"),
+        "version",
+        version,
+    );
     let manifest = manifest.to_string();
 
     if dry_run {
@@ -249,7 +255,13 @@ pub fn ensure_owners(
 pub fn set_package_version(manifest_path: &Path, version: &str, dry_run: bool) -> CargoResult<()> {
     let original_manifest = std::fs::read_to_string(manifest_path)?;
     let mut manifest: toml_edit::DocumentMut = original_manifest.parse()?;
-    manifest["package"]["version"] = toml_edit::value(version);
+    overwrite_toml_value(
+        manifest["package"]
+            .as_table_like_mut()
+            .expect("package table"),
+        "version",
+        version,
+    );
     let manifest = manifest.to_string();
 
     if dry_run {
@@ -372,7 +384,7 @@ fn upgrade_req(
     version: &semver::Version,
     upgrade: config::DependentVersion,
 ) -> bool {
-    let version_value = if let Some(version_value) = dep_item.get_mut("version") {
+    let version_value = if let Some(version_value) = dep_item.get("version") {
         version_value
     } else {
         log::debug!("not updating path-only dependency on {name}");
@@ -420,8 +432,21 @@ fn upgrade_req(
         "Updating",
         format!("{manifest_name}'s dependency from {existing_req_str} to {new_req}"),
     );
-    *version_value = toml_edit::value(new_req);
+    overwrite_toml_value(dep_item, "version", new_req);
     true
+}
+
+fn overwrite_toml_value(
+    table: &mut dyn toml_edit::TableLike,
+    key: &str,
+    value: impl Into<toml_edit::Value>,
+) {
+    let mut value = value.into();
+    let existing = table.entry(key).or_insert_with(Default::default);
+    if let Some(existing_value) = existing.as_value() {
+        *value.decor_mut() = existing_value.decor().clone();
+    }
+    *existing = toml_edit::Item::Value(value);
 }
 
 pub fn update_lock(manifest_path: &Path) -> CargoResult<()> {
