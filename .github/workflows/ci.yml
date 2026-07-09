@@ -109,7 +109,7 @@ jobs:
     - name: Install Rust
       uses: dtolnay/rust-toolchain@4be7066ada62dd38de10e7b70166bc74ed198c30 # stable
       with:
-        toolchain: "1.96"  # STABLE
+        toolchain: "1.97"  # STABLE
     - name: Initialize cache
       uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
     - name: Check documentation
@@ -127,7 +127,7 @@ jobs:
     - name: Install Rust
       uses: dtolnay/rust-toolchain@4be7066ada62dd38de10e7b70166bc74ed198c30 # stable
       with:
-        toolchain: "1.96"  # STABLE
+        toolchain: "1.97"  # STABLE
         components: rustfmt
     - name: Initialize cache
       uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
@@ -146,7 +146,7 @@ jobs:
     - name: Install Rust
       uses: dtolnay/rust-toolchain@4be7066ada62dd38de10e7b70166bc74ed198c30 # stable
       with:
-        toolchain: "1.96"  # STABLE
+        toolchain: "1.97"  # STABLE
         components: clippy
     - name: Initialize cache
       uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
