@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Fixes
+
+- Preserve comments, whitespace around version strings being edited
+
 ## [1.1.2] - 2026-03-24
 
 ### Fixes
