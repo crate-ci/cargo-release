@@ -149,7 +149,12 @@ impl PublishStep {
         )?;
 
         // STEP 1: Release Confirmation
-        super::confirm("Publish", &selected_pkgs, self.no_confirm, dry_run)?;
+        super::confirm(
+            "Publish",
+            selected_pkgs.iter().filter(|pkg| pkg.config.publish()),
+            self.no_confirm,
+            dry_run,
+        )?;
 
         // STEP 3: cargo publish
         publish(&selected_pkgs, dry_run)?;

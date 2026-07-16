@@ -1,6 +1,7 @@
 #![warn(clippy::needless_borrow)]
 #![warn(clippy::redundant_clone)]
 
+mod publish;
 mod version;
 
 fn init_registry() {
