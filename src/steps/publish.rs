@@ -152,7 +152,7 @@ impl PublishStep {
         super::confirm("Publish", &selected_pkgs, self.no_confirm, dry_run)?;
 
         // STEP 3: cargo publish
-        publish(&selected_pkgs, dry_run)?;
+        publish(&selected_pkgs, &ws_meta, dry_run)?;
 
         super::finish(failed, dry_run)
     }
@@ -169,7 +169,11 @@ impl PublishStep {
     }
 }
 
-pub fn publish(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliError> {
+pub fn publish(
+    pkgs: &[plan::PackageRelease],
+    ws_meta: &cargo_metadata::Metadata,
+    dry_run: bool,
+) -> Result<(), CliError> {
     if pkgs.is_empty() {
         Ok(())
     } else {
@@ -182,8 +186,7 @@ pub fn publish(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliEr
                 .iter()
                 .all(|p| p.config.registry() == registry && p.config.target.as_deref() == target)
         {
-            let manifest_path = &first_pkg.manifest_path;
-            workspace_publish(manifest_path, pkgs, registry, target, dry_run)
+            workspace_publish(ws_meta, pkgs, registry, target, dry_run)
         } else {
             serial_publish(pkgs, publish_grace_sleep, dry_run)
         }
@@ -191,12 +194,13 @@ pub fn publish(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliEr
 }
 
 fn workspace_publish(
-    manifest_path: &std::path::Path,
+    ws_meta: &cargo_metadata::Metadata,
     pkgs: &[plan::PackageRelease],
     registry: Option<&str>,
     target: Option<&str>,
     dry_run: bool,
 ) -> Result<(), CliError> {
+    let manifest_path = ws_meta.workspace_root.as_std_path().join("Cargo.toml");
     let crate_names = pkgs.iter().map(|p| p.meta.name.as_str()).join(", ");
     let _ = crate::ops::shell::status("Publishing", crate_names);
 
@@ -215,7 +219,7 @@ fn workspace_publish(
     if !crate::ops::cargo::publish(
         dry_run,
         verify,
-        manifest_path,
+        &manifest_path,
         &pkgids,
         &features,
         registry,
