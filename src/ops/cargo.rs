@@ -52,6 +52,7 @@ pub fn package_content(manifest_path: &Path) -> CargoResult<Vec<std::path::PathB
 
 pub fn publish(
     dry_run: bool,
+    allow_dirty: bool,
     verify: bool,
     manifest_path: &Path,
     pkgids: &[&str],
@@ -84,6 +85,8 @@ pub fn publish(
 
     if dry_run {
         command.push("--dry-run");
+    }
+    if dry_run || allow_dirty {
         command.push("--allow-dirty");
     }
 

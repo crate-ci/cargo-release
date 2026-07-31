@@ -74,6 +74,10 @@ Push:
 
 ```
 
+The standalone publish step accepts `--allow-dirty` to publish with uncommitted
+changes, matching `cargo publish --allow-dirty`. The full release workflow
+continues to require a clean working tree because it creates commits.
+
 ### Bump level
 
 * `release` (default): Remove the pre-release extension; if any (0.1.0-alpha.1 -> 0.1.0, 0.1.0 -> 0.1.0).
