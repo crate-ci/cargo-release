@@ -38,6 +38,10 @@ pub struct PublishStep {
     #[arg(short = 'n', long, conflicts_with = "execute", hide = true)]
     dry_run: bool,
 
+    /// Allow publishing with uncommitted changes
+    #[arg(long)]
+    allow_dirty: bool,
+
     /// Skip release confirmation and version preview
     #[arg(long)]
     no_confirm: bool,
@@ -119,11 +123,13 @@ impl PublishStep {
         let mut failed = false;
 
         // STEP 0: Help the user make the right decisions.
-        failed |= !super::verify_git_is_clean(
-            ws_meta.workspace_root.as_std_path(),
-            dry_run,
-            log::Level::Error,
-        )?;
+        if !self.allow_dirty {
+            failed |= !super::verify_git_is_clean(
+                ws_meta.workspace_root.as_std_path(),
+                dry_run,
+                log::Level::Error,
+            )?;
+        }
 
         failed |= !super::verify_git_branch(
             ws_meta.workspace_root.as_std_path(),
@@ -152,7 +158,7 @@ impl PublishStep {
         super::confirm("Publish", &selected_pkgs, self.no_confirm, dry_run)?;
 
         // STEP 3: cargo publish
-        publish(&selected_pkgs, dry_run)?;
+        publish(&selected_pkgs, dry_run, self.allow_dirty)?;
 
         super::finish(failed, dry_run)
     }
@@ -169,7 +175,11 @@ impl PublishStep {
     }
 }
 
-pub fn publish(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliError> {
+pub fn publish(
+    pkgs: &[plan::PackageRelease],
+    dry_run: bool,
+    allow_dirty: bool,
+) -> Result<(), CliError> {
     if pkgs.is_empty() {
         Ok(())
     } else {
@@ -183,9 +193,9 @@ pub fn publish(pkgs: &[plan::PackageRelease], dry_run: bool) -> Result<(), CliEr
                 .all(|p| p.config.registry() == registry && p.config.target.as_deref() == target)
         {
             let manifest_path = &first_pkg.manifest_path;
-            workspace_publish(manifest_path, pkgs, registry, target, dry_run)
+            workspace_publish(manifest_path, pkgs, registry, target, dry_run, allow_dirty)
         } else {
-            serial_publish(pkgs, publish_grace_sleep, dry_run)
+            serial_publish(pkgs, publish_grace_sleep, dry_run, allow_dirty)
         }
     }
 }
@@ -196,6 +206,7 @@ fn workspace_publish(
     registry: Option<&str>,
     target: Option<&str>,
     dry_run: bool,
+    allow_dirty: bool,
 ) -> Result<(), CliError> {
     let crate_names = pkgs.iter().map(|p| p.meta.name.as_str()).join(", ");
     let _ = crate::ops::shell::status("Publishing", crate_names);
@@ -214,6 +225,7 @@ fn workspace_publish(
         .collect::<Vec<_>>();
     if !crate::ops::cargo::publish(
         dry_run,
+        allow_dirty,
         verify,
         manifest_path,
         &pkgids,
@@ -231,6 +243,7 @@ fn serial_publish(
     pkgs: &[plan::PackageRelease],
     publish_grace_sleep: Option<u64>,
     dry_run: bool,
+    allow_dirty: bool,
 ) -> Result<(), CliError> {
     for pkg in pkgs {
         if !pkg.config.publish() {
@@ -258,6 +271,7 @@ fn serial_publish(
         let pkgid = &[crate_name];
         if !crate::ops::cargo::publish(
             dry_run,
+            allow_dirty,
             verify,
             &pkg.manifest_path,
             pkgid,
@@ -292,5 +306,23 @@ fn publish_grace_sleep() -> Option<u64> {
         None
     } else {
         Some(publish_grace_sleep)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use clap::Parser as _;
+
+    #[derive(clap::Parser)]
+    struct Opt {
+        #[command(flatten)]
+        publish: super::PublishStep,
+    }
+
+    #[test]
+    fn allow_dirty_argument() {
+        let opt = Opt::try_parse_from(["test", "--allow-dirty"]).unwrap();
+
+        assert!(opt.publish.allow_dirty);
     }
 }
