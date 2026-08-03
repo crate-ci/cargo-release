@@ -1,10 +1,11 @@
 #![warn(clippy::needless_borrow)]
 #![warn(clippy::redundant_clone)]
 
+mod publish;
 mod version;
 
-fn init_registry() {
-    cargo_test_support::registry::init();
+fn init_registry() -> cargo_test_support::registry::TestRegistry {
+    cargo_test_support::registry::init()
 }
 
 pub fn git_from(template: impl AsRef<std::path::Path>) -> cargo_test_support::Project {
