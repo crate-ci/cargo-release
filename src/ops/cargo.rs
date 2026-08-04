@@ -140,6 +140,22 @@ pub fn is_published(
     }
 }
 
+pub fn is_published_req(
+    index: &mut crate::ops::index::CratesIoIndex,
+    registry: Option<&str>,
+    name: &str,
+    version_req: &semver::VersionReq,
+    certs_source: CertsSource,
+) -> bool {
+    match index.has_krate_version_req(registry, name, version_req, certs_source) {
+        Ok(has_krate_version) => has_krate_version.unwrap_or(false),
+        Err(err) => {
+            log::warn!("failed to read metadata for {name}: {err:#}");
+            false
+        }
+    }
+}
+
 pub fn set_workspace_version(
     manifest_path: &Path,
     version: &str,

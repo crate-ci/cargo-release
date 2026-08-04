@@ -45,6 +45,24 @@ impl CratesIoIndex {
     }
 
     #[inline]
+    pub fn has_krate_version_req(
+        &mut self,
+        registry: Option<&str>,
+        name: &str,
+        version_req: &semver::VersionReq,
+        certs_source: CertsSource,
+    ) -> Result<Option<bool>, crate::error::CliError> {
+        let krate = self.krate(registry, name, certs_source)?;
+        Ok(krate.map(|ik| {
+            ik.versions.iter().any(|iv| {
+                iv.version
+                    .parse::<semver::Version>()
+                    .is_ok_and(|version| version_req.matches(&version))
+            })
+        }))
+    }
+
+    #[inline]
     pub fn update_krate(&mut self, registry: Option<&str>, name: &str) {
         if registry.is_some() {
             return;

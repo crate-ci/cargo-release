@@ -66,17 +66,7 @@ fn unpublished_workspace_dependency() {
         .stdout_eq(str![])
         .stderr_eq(str![[r#"
 warning: disabled by user, skipping dependency v0.1.0 despite being unpublished
-warning: push target `origin/master` doesn't exist
-  Publishing application
-note: found `dummy-registry` as only allowed registry. Publishing to it automatically.
-    Updating `dummy-registry` index
-   Packaging application v0.1.0 ([ROOT]/foo/application)
-error: failed to prepare local package for uploading
-
-Caused by:
-  no matching package named `dependency` found
-  location searched: `dummy-registry` index (which is replacing registry `crates-io`)
-  required by package `application v0.1.0 ([ROOT]/foo/application)`
+error: application 0.1.0 depends on unpublished workspace package dependency 0.1.0
 
 "#]]);
 }
@@ -164,17 +154,7 @@ fn unpublished_git_dependency() {
         .failure()
         .stdout_eq(str![])
         .stderr_eq(str![[r#"
-warning: push target `origin/master` doesn't exist
-  Publishing application
-note: found `dummy-registry` as only allowed registry. Publishing to it automatically.
-    Updating `dummy-registry` index
-   Packaging application v0.1.0 ([ROOT]/foo)
-error: failed to prepare local package for uploading
-
-Caused by:
-  no matching package named `dependency` found
-  location searched: `dummy-registry` index (which is replacing registry `crates-io`)
-  required by package `application v0.1.0 ([ROOT]/foo)`
+error: application 0.1.0 depends on unpublished package dependency ^0.1.0
 
 "#]]);
 }

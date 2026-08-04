@@ -706,3 +706,86 @@ impl BumpLevel {
         Ok(())
     }
 }
+
+pub fn verify_dependencies(
+    selected_pkgs: &[plan::PackageRelease],
+    excluded_pkgs: &[plan::PackageRelease],
+    index: &mut crate::ops::index::CratesIoIndex,
+    dry_run: bool,
+    level: log::Level,
+) -> Result<bool, crate::error::CliError> {
+    let mut success = true;
+
+    for pkg in selected_pkgs {
+        if !pkg.config.publish() || pkg.config.registry().is_some() {
+            continue;
+        }
+        let version = pkg.planned_version.as_ref().unwrap_or(&pkg.initial_version);
+        let mut checked = std::collections::HashSet::new();
+        for dependency in &pkg.meta.dependencies {
+            if dependency.registry.is_some()
+                || (dependency.req == semver::VersionReq::STAR
+                    && !dependency
+                        .source
+                        .as_ref()
+                        .is_some_and(cargo_metadata::Source::is_crates_io))
+                || !checked.insert((dependency.name.as_str(), &dependency.req))
+            {
+                continue;
+            }
+
+            let publishing = selected_pkgs.iter().any(|candidate| {
+                let candidate_version = candidate
+                    .planned_version
+                    .as_ref()
+                    .unwrap_or(&candidate.initial_version);
+                candidate.config.publish()
+                    && candidate.config.registry() == pkg.config.registry()
+                    && candidate.meta.name.as_str() == dependency.name.as_str()
+                    && dependency.req.matches(&candidate_version.full_version)
+            });
+            if publishing
+                || crate::ops::cargo::is_published_req(
+                    index,
+                    pkg.config.registry(),
+                    &dependency.name,
+                    &dependency.req,
+                    pkg.config.certs_source(),
+                )
+            {
+                continue;
+            }
+
+            let workspace_dependency = selected_pkgs
+                .iter()
+                .chain(excluded_pkgs)
+                .find(|candidate| candidate.meta.name.as_str() == dependency.name.as_str());
+            let message = if let Some(workspace_dependency) = workspace_dependency {
+                let dependency_version = workspace_dependency
+                    .planned_version
+                    .as_ref()
+                    .unwrap_or(&workspace_dependency.initial_version);
+                format!(
+                    "{} {} depends on unpublished workspace package {} {}",
+                    pkg.meta.name,
+                    version.full_version_string,
+                    workspace_dependency.meta.name,
+                    dependency_version.full_version_string
+                )
+            } else {
+                format!(
+                    "{} {} depends on unpublished package {} {}",
+                    pkg.meta.name, version.full_version_string, dependency.name, dependency.req
+                )
+            };
+            let _ = crate::ops::shell::log(level, message);
+            success = false;
+        }
+    }
+
+    if !success && level == log::Level::Error && !dry_run {
+        return Err(101.into());
+    }
+
+    Ok(success)
+}
