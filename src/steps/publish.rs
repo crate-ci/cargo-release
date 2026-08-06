@@ -106,7 +106,7 @@ impl PublishStep {
             }
         }
 
-        let (selected_pkgs, _excluded_pkgs): (Vec<_>, Vec<_>) = pkgs
+        let (selected_pkgs, excluded_pkgs): (Vec<_>, Vec<_>) = pkgs
             .into_iter()
             .map(|(_, pkg)| pkg)
             .partition(|p| p.config.release());
@@ -119,6 +119,14 @@ impl PublishStep {
         let mut failed = false;
 
         // STEP 0: Help the user make the right decisions.
+        failed |= !super::verify_dependencies(
+            &selected_pkgs,
+            &excluded_pkgs,
+            &mut index,
+            dry_run,
+            log::Level::Error,
+        )?;
+
         failed |= !super::verify_git_is_clean(
             ws_meta.workspace_root.as_std_path(),
             dry_run,
