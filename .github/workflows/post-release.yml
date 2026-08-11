@@ -55,6 +55,8 @@ jobs:
         GH_TOKEN: ${{ github.token }}
       run: gh release create $TAG --verify-tag --draft --title $TAG --notes-file notes-${TAG}.md
   build-release:
+    permissions:
+      contents: write
     name: build-release
     needs: create-release
     strategy:
