@@ -448,15 +448,20 @@ pub fn consolidate_commits(
     Ok(consolidate_commits.expect("at least one package"))
 }
 
-pub fn confirm(
+pub fn confirm<'a>(
     step: &str,
-    pkgs: &[plan::PackageRelease],
+    pkgs: impl IntoIterator<Item = &'a plan::PackageRelease>,
     no_confirm: bool,
     dry_run: bool,
 ) -> Result<(), crate::error::CliError> {
     if !dry_run && !no_confirm {
+        let pkgs = pkgs.into_iter().collect::<Vec<_>>();
+        if pkgs.is_empty() {
+            return Ok(());
+        }
+
         let prompt = if pkgs.len() == 1 {
-            let pkg = &pkgs[0];
+            let pkg = pkgs[0];
             let crate_name = pkg.meta.name.as_str();
             let version = pkg.planned_version.as_ref().unwrap_or(&pkg.initial_version);
             format!("{} {} {}?", step, crate_name, version.full_version_string)
