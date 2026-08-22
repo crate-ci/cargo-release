@@ -746,12 +746,17 @@ pub struct CommitArgs {
     pub sign_commit: bool,
     #[arg(long, overrides_with("sign_commit"), hide(true))]
     pub no_sign_commit: bool,
+
+    /// Commit message template; supports {{version}}, {{prev_version}}, {{crate_name}}, {{date}}, etc.
+    #[arg(long, value_name = "MSG")]
+    pub pre_release_commit_message: Option<String>,
 }
 
 impl CommitArgs {
     pub fn to_config(&self) -> Config {
         Config {
             sign_commit: resolve_bool_arg(self.sign_commit, self.no_sign_commit),
+            pre_release_commit_message: self.pre_release_commit_message.clone(),
             ..Default::default()
         }
     }
