@@ -1,0 +1,3 @@
+[workspace]
+members = ["private", "public"]
+resolver = "2"
