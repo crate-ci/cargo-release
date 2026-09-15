@@ -126,6 +126,12 @@ impl CommitStep {
 
 pub fn pkg_commit(pkg: &plan::PackageRelease, dry_run: bool) -> Result<(), CliError> {
     let cwd = &pkg.package_root;
+
+    if git::is_dirty(cwd)?.is_none() {
+        log::debug!("No files changed, skipping commit");
+        return Ok(());
+    }
+
     let crate_name = pkg.meta.name.as_str();
     let version = pkg.planned_version.as_ref().unwrap_or(&pkg.initial_version);
     let prev_version_var = pkg.initial_version.bare_version_string.as_str();
@@ -157,6 +163,11 @@ pub fn workspace_commit(
     pkgs: &[plan::PackageRelease],
     dry_run: bool,
 ) -> Result<(), CliError> {
+    if git::is_dirty(ws_meta.workspace_root.as_std_path())?.is_none() {
+        log::debug!("No files changed, skipping commit");
+        return Ok(());
+    }
+
     let shared_version = super::find_shared_versions(pkgs)?;
 
     let shared_commit_msg = {
