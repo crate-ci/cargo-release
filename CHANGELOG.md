@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [1.1.6] - 2026-09-16
+
 ### Features
 
 - *(git)* relativeworktrees extension support
@@ -850,7 +852,8 @@ git.
 * Doc update
 
 <!-- next-url -->
-[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v1.1.5...HEAD
+[Unreleased]: https://github.com/crate-ci/cargo-release/compare/v1.1.6...HEAD
+[1.1.6]: https://github.com/crate-ci/cargo-release/compare/v1.1.5...v1.1.6
 [1.1.5]: https://github.com/crate-ci/cargo-release/compare/v1.1.4...v1.1.5
 [1.1.4]: https://github.com/crate-ci/cargo-release/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/crate-ci/cargo-release/compare/v1.1.2...v1.1.3
