@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Features
+
+- *(git)* relativeworktrees extension support
+
 ## [1.1.5] - 2026-08-11
 
 ## [1.1.4] - 2026-08-06
