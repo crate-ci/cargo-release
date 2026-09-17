@@ -360,7 +360,8 @@ impl From<Vec<UnstableValues>> for Unstable {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Replace {
-    pub file: PathBuf,
+    #[serde(deserialize_with = "deserialize_replace_as_globs")]
+    pub file: Vec<PathBuf>,
     pub search: String,
     pub replace: String,
     pub min: Option<usize>,
@@ -368,6 +369,40 @@ pub struct Replace {
     pub exactly: Option<usize>,
     #[serde(default)]
     pub prerelease: bool,
+}
+
+fn deserialize_replace_as_globs<'de, D>(d: D) -> Result<Vec<PathBuf>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    struct Visitor;
+    impl<'a> serde::de::Visitor<'a> for Visitor {
+        type Value = globwalk::GlobWalker;
+        fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            formatter.write_str("glob")
+        }
+        fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+        where
+            E: serde::de::Error,
+        {
+            globwalk::glob(v).map_err(serde::de::Error::custom)
+        }
+
+        fn visit_string<E>(self, v: String) -> Result<Self::Value, E>
+        where
+            E: serde::de::Error,
+        {
+            globwalk::glob(v).map_err(serde::de::Error::custom)
+        }
+    }
+    let globber = d.deserialize_str(Visitor)?;
+    globber
+        .into_iter()
+        .map(|v| {
+            let ent = v.map_err(serde::de::Error::custom)?;
+            Ok(ent.into_path())
+        })
+        .collect()
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
