@@ -250,7 +250,7 @@ This field is an array of tables with the following
 * `exactly` (optional): Number of occurrences of `search`.
 * `prerelease` (default is `false`): Run the replacement when bumping to a pre-release level.
 
-See [Cargo.toml](https://github.com/crate-ci/cargo-release/blob/master/Cargo.toml) for example.
+See [Cargo.toml](https://github.com/crate-ci/cargo-release/blob/main/Cargo.toml) for example.
 
 See also
 - [Placeholders](#placeholders)
