@@ -181,6 +181,7 @@ clap-cargo = { version = "0.18.3", features = ["cargo_metadata"] }
 log = "0.4"
 env_logger = "0.11"
 globset = { version = "0.4.18", default-features = false }
+globwalk = "0.9.1"
 dunce = "1.0.5"
 anyhow = "1.0.102"
 git-conventional = "1.1.0"
