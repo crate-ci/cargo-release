@@ -18,6 +18,107 @@ pub fn fetch(dir: &Path, remote: &str, branch: &str) -> CargoResult<()> {
         .map_err(|_| anyhow::format_err!("`git` not found"))
 }
 
+/// Resolve `remote` to the name of a configured remote
+///
+/// `remote` may be a remote name or the URL of a configured remote (matched against its `url` or
+/// `pushurl`)
+pub fn resolve_remote(dir: &Path, remote: &str) -> CargoResult<String> {
+    let repo = git2::Repository::discover(dir)?;
+
+    // `:` can't appear in a remote name, so anything without one is a name (or a local path). Pass
+    // those through unchanged and let git report on remotes that don't exist, as before.
+    if repo.find_remote(remote).is_ok() || !remote.contains(':') {
+        return Ok(remote.to_owned());
+    }
+
+    let target = normalize_url(remote);
+    let is_match = |url: Option<&str>| match (url, &target) {
+        (Some(url), Some(target)) => normalize_url(url).as_ref() == Some(target),
+        (Some(url), None) => url == remote,
+        (None, _) => false,
+    };
+
+    let mut configured = Vec::new();
+    let mut matches = Vec::new();
+    for name in repo.remotes()?.iter().flatten() {
+        let r = repo.find_remote(name)?;
+        if is_match(r.url()) || is_match(r.pushurl()) {
+            matches.push(name.to_owned());
+        }
+        configured.push((name.to_owned(), r.url().unwrap_or_default().to_owned()));
+    }
+
+    match matches.len() {
+        1 => {
+            let name = matches.pop().unwrap();
+            log::debug!("push-remote `{remote}` resolved to remote `{name}`");
+            Ok(name)
+        }
+        0 => {
+            let mut msg = format!(
+                "push-remote `{remote}` is neither a remote name nor the URL of a configured remote"
+            );
+            if configured.is_empty() {
+                msg.push_str("\nno remotes are configured");
+            } else {
+                msg.push_str("\nconfigured remotes:");
+                for (name, url) in &configured {
+                    msg.push_str(&format!("\n  {name}  {url}"));
+                }
+            }
+            msg.push_str(&format!(
+                "\nto add it, run `git remote add <name> {remote}`"
+            ));
+            Err(anyhow::format_err!(msg))
+        }
+        _ => Err(anyhow::format_err!(
+            "push-remote `{remote}` matches multiple remotes: {}; set push-remote to one of them",
+            matches.join(", ")
+        )),
+    }
+}
+
+/// Normalize a remote URL to `(host, path)` so equivalent https/ssh forms compare equal
+///
+/// Returns `None` for local paths and `file://` URLs
+fn normalize_url(url: &str) -> Option<(String, String)> {
+    let (authority, path) = if let Some((scheme, rest)) = url.split_once("://") {
+        if scheme.eq_ignore_ascii_case("file") {
+            return None;
+        }
+        let (authority, path) = rest.split_once('/').unwrap_or((rest, ""));
+        // Drop the user and port
+        let authority = authority
+            .rsplit_once('@')
+            .map(|(_, h)| h)
+            .unwrap_or(authority);
+        let host = authority
+            .split_once(':')
+            .map(|(h, _)| h)
+            .unwrap_or(authority);
+        (host, path)
+    } else {
+        // scp-like syntax: `[user@]host:path`, where the `:` comes before any `/`
+        let (authority, path) = url.split_once(':')?;
+        // A single letter is a Windows drive (`C:\repo`), not a host
+        if authority.len() <= 1 || authority.contains('/') {
+            return None;
+        }
+        let host = authority
+            .rsplit_once('@')
+            .map(|(_, h)| h)
+            .unwrap_or(authority);
+        (host, path)
+    };
+    if authority.is_empty() {
+        return None;
+    }
+
+    let path = path.trim_matches('/');
+    let path = path.strip_suffix(".git").unwrap_or(path);
+    Some((authority.to_ascii_lowercase(), path.to_owned()))
+}
+
 pub fn is_behind_remote(dir: &Path, remote: &str, branch: &str) -> CargoResult<bool> {
     let repo = git2::Repository::discover(dir)?;
 
@@ -265,4 +366,70 @@ pub fn bytes2path(b: &[u8]) -> &Path {
 pub fn bytes2path(b: &[u8]) -> &std::path::Path {
     use std::str;
     std::path::Path::new(str::from_utf8(b).unwrap())
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn normalize_url_equivalent_forms() {
+        let expected = Some(("github.com".to_owned(), "crate-ci/cargo-release".to_owned()));
+        for url in [
+            "https://github.com/crate-ci/cargo-release",
+            "https://github.com/crate-ci/cargo-release.git",
+            "https://github.com/crate-ci/cargo-release/",
+            "https://user@GitHub.com/crate-ci/cargo-release",
+            "git@github.com:crate-ci/cargo-release.git",
+            "github.com:crate-ci/cargo-release",
+            "ssh://git@github.com:22/crate-ci/cargo-release.git",
+            "git://github.com/crate-ci/cargo-release",
+        ] {
+            assert_eq!(normalize_url(url), expected, "{url}");
+        }
+    }
+
+    #[test]
+    fn normalize_url_local_paths() {
+        assert_eq!(normalize_url("/tmp/repo"), None);
+        assert_eq!(normalize_url("../repo"), None);
+        assert_eq!(normalize_url("./foo:bar"), None);
+        assert_eq!(normalize_url("file:///tmp/repo"), None);
+    }
+
+    #[test]
+    fn resolve_remote_by_name_and_url() {
+        let dir = assert_fs::TempDir::new().unwrap();
+        let repo = git2::Repository::init(dir.path()).unwrap();
+        repo.remote("origin", "https://github.com/me/cargo-release")
+            .unwrap();
+        repo.remote("upstream", "git@github.com:crate-ci/cargo-release.git")
+            .unwrap();
+        repo.remote("mirror", "https://example.com/mirror").unwrap();
+        repo.remote_set_pushurl("mirror", Some("https://example.com/push-only"))
+            .unwrap();
+
+        assert_eq!(resolve_remote(dir.path(), "origin").unwrap(), "origin");
+        assert_eq!(resolve_remote(dir.path(), "missing").unwrap(), "missing");
+        assert_eq!(
+            resolve_remote(dir.path(), "https://github.com/crate-ci/cargo-release").unwrap(),
+            "upstream"
+        );
+        assert_eq!(
+            resolve_remote(dir.path(), "https://example.com/push-only.git").unwrap(),
+            "mirror"
+        );
+
+        let err = resolve_remote(dir.path(), "https://example.com/nope")
+            .unwrap_err()
+            .to_string();
+        assert!(err.contains("upstream"), "{err}");
+
+        repo.remote("upstream2", "https://github.com/crate-ci/cargo-release")
+            .unwrap();
+        let err = resolve_remote(dir.path(), "https://github.com/crate-ci/cargo-release")
+            .unwrap_err()
+            .to_string();
+        assert!(err.contains("multiple remotes"), "{err}");
+    }
 }
