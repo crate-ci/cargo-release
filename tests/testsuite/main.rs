@@ -34,7 +34,7 @@ fn create_default_gitconfig() {
 }
 
 pub fn cargo_exe() -> std::path::PathBuf {
-    snapbox::cmd::cargo_bin("cargo-release")
+    snapbox::cmd::cargo_bin!("cargo-release").into()
 }
 
 /// Test the cargo command
