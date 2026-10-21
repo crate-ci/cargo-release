@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+### Fixes
+
+- Resolve security advisories in dependencies
+
 ## [1.1.6] - 2026-09-16
 
 ### Features
