@@ -1,11 +1,13 @@
 use crate::config::CertsSource;
-use tame_index::krate::IndexKrate;
-use tame_index::utils::flock::FileLock;
+use semver::Version;
+use tame_index::flock::FileLock;
+
+type VersionSet = Vec<Version>;
 
 #[derive(Default)]
 pub struct CratesIoIndex {
     index: Option<RemoteIndex>,
-    cache: std::collections::HashMap<String, Option<IndexKrate>>,
+    cache: std::collections::HashMap<String, Option<VersionSet>>,
 }
 
 impl CratesIoIndex {
@@ -41,7 +43,8 @@ impl CratesIoIndex {
         certs_source: CertsSource,
     ) -> Result<Option<bool>, crate::error::CliError> {
         let krate = self.krate(registry, name, certs_source)?;
-        Ok(krate.map(|ik| ik.versions.iter().any(|iv| iv.version == version)))
+        let version = version.parse::<Version>()?;
+        Ok(krate.map(|ik| ik.iter().any(|iv| iv == &version)))
     }
 
     #[inline]
@@ -53,13 +56,7 @@ impl CratesIoIndex {
         certs_source: CertsSource,
     ) -> Result<Option<bool>, crate::error::CliError> {
         let krate = self.krate(registry, name, certs_source)?;
-        Ok(krate.map(|ik| {
-            ik.versions.iter().any(|iv| {
-                iv.version
-                    .parse::<semver::Version>()
-                    .is_ok_and(|version| version_req.matches(&version))
-            })
-        }))
+        Ok(krate.map(|ik| ik.iter().any(|iv| version_req.matches(iv))))
     }
 
     #[inline]
@@ -76,7 +73,7 @@ impl CratesIoIndex {
         registry: Option<&str>,
         name: &str,
         certs_source: CertsSource,
-    ) -> Result<Option<IndexKrate>, crate::error::CliError> {
+    ) -> Result<Option<VersionSet>, crate::error::CliError> {
         if let Some(registry) = registry {
             log::trace!("Cannot connect to registry `{registry}`");
             return Ok(None);
@@ -101,9 +98,9 @@ impl CratesIoIndex {
 
 pub struct RemoteIndex {
     index: tame_index::SparseIndex,
-    client: tame_index::external::reqwest::blocking::Client,
+    client: ureq::Agent,
     lock: FileLock,
-    etags: Vec<(String, String)>,
+    etag_cache: tame_index::EtagCache,
 }
 
 impl RemoteIndex {
@@ -113,16 +110,20 @@ impl RemoteIndex {
             tame_index::IndexUrl::CratesIoSparse,
         ))?;
 
-        let client = {
-            let builder = tame_index::external::reqwest::blocking::ClientBuilder::new();
-
-            let builder = match certs_source {
-                CertsSource::Webpki => builder.tls_built_in_webpki_certs(true),
-                CertsSource::Native => builder.tls_built_in_native_certs(true),
-            };
-
-            builder.build()?
-        };
+        let client = ureq::Agent::config_builder()
+            // tame_index handles HTTP status codes internally
+            .http_status_as_error(false)
+            .tls_config(
+                ureq::tls::TlsConfig::builder()
+                    .provider(ureq::tls::TlsProvider::Rustls)
+                    .root_certs(match certs_source {
+                        CertsSource::Webpki => ureq::tls::RootCerts::WebPki,
+                        CertsSource::Native => ureq::tls::RootCerts::PlatformVerifier,
+                    })
+                    .build(),
+            )
+            .build()
+            .new_agent();
 
         let lock = FileLock::unlocked();
 
@@ -130,68 +131,40 @@ impl RemoteIndex {
             index,
             client,
             lock,
-            etags: Vec::new(),
+            etag_cache: Default::default(),
         })
     }
 
     pub(crate) fn krate(
         &mut self,
         name: &str,
-    ) -> Result<Option<IndexKrate>, crate::error::CliError> {
-        let etag = self
-            .etags
-            .iter()
-            .find_map(|(krate, etag)| (krate == name).then_some(etag.as_str()))
-            .unwrap_or("");
-
+    ) -> Result<Option<VersionSet>, crate::error::CliError> {
         let krate_name = name.try_into()?;
         let req = self
-            .index
-            .make_remote_request(krate_name, Some(etag), &self.lock)?;
-        let (
-            tame_index::external::http::request::Parts {
-                method,
-                uri,
-                version,
-                headers,
-                ..
-            },
-            _,
-        ) = req.into_parts();
-        let mut req = self.client.request(method, uri.to_string());
-        req = req.version(version);
-        req = req.headers(headers);
-        let res = self.client.execute(req.build()?)?;
+            .etag_cache
+            .make_remote_request(&self.index, krate_name, &self.lock)?;
 
-        // Grab the etag if it exists for future requests
-        if let Some(etag) = res
-            .headers()
-            .get(tame_index::external::reqwest::header::ETAG)
-            && let Ok(etag) = etag.to_str()
-        {
-            if let Some(i) = self.etags.iter().position(|(krate, _)| krate == name) {
-                etag.clone_into(&mut self.etags[i].1);
-            } else {
-                self.etags.push((name.to_owned(), etag.to_owned()));
-            }
-        }
+        let (parts, mut body) = self.client.run(req.into())?.into_parts();
+        let body = body.read_to_vec()?;
 
-        let mut builder = tame_index::external::http::Response::builder()
-            .status(res.status())
-            .version(res.version());
+        self.etag_cache
+            .parse_remote_response(
+                &self.index,
+                krate_name,
+                &ureq::http::Response::from_parts(parts, body),
+                false,
+                &self.lock,
+            )
+            .and_then(|ie| {
+                let Some(ie) = ie else {
+                    return Ok(None);
+                };
 
-        builder
-            .headers_mut()
-            .unwrap()
-            .extend(res.headers().iter().map(|(k, v)| (k.clone(), v.clone())));
-
-        let body = res.bytes()?;
-        let response = builder
-            .body(body.to_vec())
-            .map_err(|e| tame_index::Error::from(tame_index::error::HttpError::from(e)))?;
-
-        self.index
-            .parse_remote_response(krate_name, response, false, &self.lock)
+                ie.iter()?
+                    .map(|entry| Ok(entry.raw().0.parse::<Version>()?))
+                    .collect::<Result<Vec<_>, tame_index::Error>>()
+                    .map(Some)
+            })
             .map_err(Into::into)
     }
 }
