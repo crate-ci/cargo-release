@@ -24,7 +24,7 @@ Features include:
 
 ## Install
 
-Current release: 1.1.6
+Current release: 1.1.7
 
 ```console,ignore
 $ cargo install cargo-release
