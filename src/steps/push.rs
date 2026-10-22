@@ -149,7 +149,10 @@ pub fn push(
     dry_run: bool,
 ) -> Result<(), CliError> {
     if ws_config.push() {
-        let git_remote = ws_config.push_remote();
+        let git_remote = git::resolve_remote(
+            ws_meta.workspace_root.as_std_path(),
+            ws_config.push_remote(),
+        )?;
         let branch = git::current_branch(ws_meta.workspace_root.as_std_path())?;
 
         let mut shared_refs = HashSet::new();
@@ -160,7 +163,7 @@ pub fn push(
 
             if !git::is_local_unchanged(
                 ws_meta.workspace_root.as_std_path(),
-                git_remote,
+                &git_remote,
                 branch.as_str(),
             )? || dry_run
             {
@@ -179,7 +182,7 @@ pub fn push(
             );
             if !git::push(
                 ws_meta.workspace_root.as_std_path(),
-                git_remote,
+                &git_remote,
                 shared_refs,
                 ws_config.push_options(),
                 dry_run,

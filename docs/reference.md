@@ -69,8 +69,8 @@ Tag:
       --tag-name <NAME>      The name of the git tag
 
 Push:
-      --no-push             Do not run git push in the last step
-      --push-remote <NAME>  Git remote to push
+      --no-push                 Do not run git push in the last step
+      --push-remote <NAME|URL>  Git remote (name or URL) to push
 
 ```
 
@@ -353,6 +353,14 @@ Git push the branch / tags
 - CLI: `--push-remote`
 
 Default git remote to push
+
+This may be a remote name (e.g. `"upstream"`) or a remote's URL (e.g.
+`"https://github.com/crate-ci/cargo-release"`). A URL is matched against the
+`url` and `pushurl` of the configured remotes, ignoring the scheme, user, port
+and a trailing `.git`, so `https://` and `git@host:` forms of the same
+repository match. The URL must belong to a remote that already exists locally.
+Because remote names differ between clones, a URL is the better choice in a
+shared `release.toml`.
 
 ### `push-options`
 
