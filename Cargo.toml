@@ -168,7 +168,6 @@ toml = "1.1.1"
 ureq = { version = "3.4.2", default-features = false, features = ["platform-verifier", "rustls", "rustls-webpki-roots"] }
 serde = { version = "1.0", features = ["derive"] }
 semver = "1.0"
-quick-error = "2.0"
 regex = "1.12"
 bstr = "1.12.1"
 maplit = "1.0"
