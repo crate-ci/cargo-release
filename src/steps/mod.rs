@@ -161,10 +161,10 @@ pub fn verify_if_behind(
         return Ok(success);
     }
 
-    let git_remote = ws_config.push_remote();
+    let git_remote = crate::ops::git::resolve_remote(path, ws_config.push_remote())?;
     let branch = crate::ops::git::current_branch(path)?;
-    crate::ops::git::fetch(path, git_remote, &branch)?;
-    if crate::ops::git::is_behind_remote(path, git_remote, &branch)? {
+    crate::ops::git::fetch(path, &git_remote, &branch)?;
+    if crate::ops::git::is_behind_remote(path, &git_remote, &branch)? {
         let title = format!("{branch} is behind {git_remote}/{branch}");
         if let Some(level) = crate::ops::shell::level(level) {
             let report = &[

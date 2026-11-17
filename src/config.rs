@@ -848,8 +848,8 @@ pub struct PushArgs {
     #[arg(long, overrides_with("push"))]
     no_push: bool,
 
-    /// Git remote to push
-    #[arg(long, value_name = "NAME")]
+    /// Git remote (name or URL) to push
+    #[arg(long, value_name = "NAME|URL")]
     push_remote: Option<String>,
 }
 
