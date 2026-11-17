@@ -96,12 +96,9 @@ pub fn is_dirty(dir: &Path) -> CargoResult<Option<Vec<String>>> {
         .show(git2::StatusShow::IndexAndWorkdir)
         .include_untracked(true);
     let statuses = repo.statuses(Some(&mut options))?;
-    let dirty_tree = !statuses.is_empty();
-    if dirty_tree {
-        for status in statuses.iter() {
-            let path = bytes2path(status.path_bytes());
-            entries.push(format!("{} ({:?})", path.display(), status.status()));
-        }
+    for status in statuses.iter() {
+        let path = bytes2path(status.path_bytes());
+        entries.push(format!("{} ({:?})", path.display(), status.status()));
     }
 
     if entries.is_empty() {
@@ -138,24 +135,11 @@ pub fn changed_files(dir: &Path, tag: &str) -> CargoResult<Option<Vec<PathBuf>>>
 }
 
 pub fn commit_all(dir: &Path, msg: &str, sign: bool, dry_run: bool) -> CargoResult<bool> {
-    let repo = git2::Repository::discover(dir)?;
-    let mut options = git2::StatusOptions::new();
-    options
-        .show(git2::StatusShow::IndexAndWorkdir)
-        .include_untracked(true);
-    let statuses = repo.statuses(Some(&mut options))?;
-    let dirty_tree = !statuses.is_empty();
-
-    if dirty_tree || dry_run {
-        call_on_path(
-            vec!["git", "commit", if sign { "-S" } else { "" }, "-am", msg],
-            dir,
-            dry_run,
-        )
-    } else {
-        log::debug!("No files changed, skipping commit");
-        Ok(true)
-    }
+    call_on_path(
+        vec!["git", "commit", if sign { "-S" } else { "" }, "-am", msg],
+        dir,
+        dry_run,
+    )
 }
 
 pub fn tag(dir: &Path, name: &str, msg: &str, sign: bool, dry_run: bool) -> CargoResult<bool> {
